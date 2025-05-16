@@ -7,6 +7,7 @@ export interface Game {
   screenshots: string[];
   rvmGameId: string; // Kept for potential other uses, or if old emulator is reinstated
   diskUrl: string; // New field for the .dsk file URL
+  emulatorCommand: string; // New field for the specific emulator command
   genre: string;
   year: number;
   developer: string;
@@ -14,6 +15,7 @@ export interface Game {
 }
 
 // IMPORTANT: Ensure your .dsk files are placed in the `public/gamez/` directory.
+// Update emulatorCommand for each game as needed.
 export const games: Game[] = [
   {
     id: "Ams3s",
@@ -26,7 +28,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00080",
-    diskUrl: "/gamez/Ams3s.dsk", // Updated path
+    diskUrl: "/gamez/Ams3s.dsk",
+    emulatorCommand: 'run"disc\n',
     genre: "Puzzle",
     year: 2015,
     developer: "John Lobo",
@@ -42,7 +45,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00053",
-    diskUrl: "/gamez/batman-the-movie.dsk", // Updated path
+    diskUrl: "/gamez/batman-the-movie.dsk",
+    emulatorCommand: 'run"disc\n',
     genre: "Action-adventure",
     year: 1989,
     developer: "Ocean Software",
@@ -58,7 +62,8 @@ export const games: Game[] = [
         "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00031",
-    diskUrl: "/gamez/arkanoid.dsk", // Updated path
+    diskUrl: "/gamez/arkanoid.dsk",
+    emulatorCommand: 'run"arkanoid\n', // Example: might be different
     genre: "Breakout clone",
     year: 1986,
     developer: "Taito",
@@ -74,7 +79,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00292",
-    diskUrl: "/gamez/gryzor.dsk", // Updated path
+    diskUrl: "/gamez/gryzor.dsk",
+    emulatorCommand: 'run"gryzor\n', // Example: might be different
     genre: "Run and gun",
     year: 1987,
     developer: "Konami",
@@ -90,7 +96,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00556",
-    diskUrl: "/gamez/sorcery.dsk", // Updated path
+    diskUrl: "/gamez/sorcery.dsk",
+    emulatorCommand: 'run"sorcery\n', // Example: might be different
     genre: "Action-adventure",
     year: 1985,
     developer: "Virgin Games",

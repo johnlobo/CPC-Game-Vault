@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface EmulatorProps {
   diskUrl: string; // URL to the .dsk file
+  command: string; // Command to run the game
   title: string;
 }
 
@@ -23,7 +24,7 @@ declare global {
   }
 }
 
-export function Emulator({ diskUrl, title }: EmulatorProps) {
+export function Emulator({ diskUrl, command, title }: EmulatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [playerStatus, setPlayerStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
       return;
     }
 
-    currentContainer.innerHTML = '';
+    currentContainer.innerHTML = ''; // Clear previous emulator instance or messages
     setPlayerStatus('loading');
     setErrorMessage(null);
 
@@ -48,7 +49,7 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
             type: 'dsk',
             url: diskUrl,
           },
-          command: 'run"disc\n',
+          command: command, // Use the passed command
           warpFrames: 20 * 50,
           waitAudio: true,
         });
@@ -69,11 +70,12 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
     }
 
     return () => {
+      // Cleanup when component unmounts or diskUrl/command changes (due to key prop)
       if (currentContainer) {
         currentContainer.innerHTML = '';
       }
     };
-  }, [diskUrl]); 
+  }, [diskUrl, command]); // Add command to dependency array
 
   const handleContainerClick = () => {
     if (containerRef.current) {
