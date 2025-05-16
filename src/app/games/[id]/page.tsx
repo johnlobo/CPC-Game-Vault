@@ -72,8 +72,8 @@ export default async function GamePage({ params }: GamePageProps) {
         <h2 className="text-sm sm:text-base font-bold mb-2 sm:mb-2.5 text-center text-primary tracking-tight">  {/* Adjusted text size and margin */}
           <Eye size={14} className="inline-block mr-1 mb-0.5 text-accent sm:size-16" /> Play Now!  {/* Adjusted icon size */}
         </h2>
-        {/* Ensure game.diskUrl is passed to the Emulator */}
-        <Emulator diskUrl={game.diskUrl} title={game.title} />
+        {/* Ensure game.diskUrl is passed to the Emulator and key is set */}
+        <Emulator key={game.diskUrl} diskUrl={game.diskUrl} title={game.title} />
       </section>
 
       <Separator className="my-3 sm:my-4" /> {/* Adjusted margin */}
