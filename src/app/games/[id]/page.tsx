@@ -44,22 +44,22 @@ export default async function GamePage({ params }: GamePageProps) {
   }
 
   return (
-    <div className="space-y-8 sm:space-y-10"> 
-      <header className="text-center space-y-2 pt-3"> 
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 sm:gap-2">
-          <Badge variant="secondary" className="px-2 py-0.5 text-xs"><CalendarDays size={10} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-2 py-0.5 text-xs"><Tag size={10} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-2 py-0.5 text-xs"><Code2 size={10} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-2 py-0.5 text-xs"><Users size={10} className="mr-1" /> {game.publisher}</Badge>
+    <div className="space-y-6 sm:space-y-8"> 
+      <header className="text-center space-y-1.5 pt-2 sm:pt-3"> 
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
+        <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-1.5">
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-xs"><CalendarDays size={10} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-xs"><Tag size={10} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-xs"><Code2 size={10} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-xs"><Users size={10} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
       <div>
-        <Button variant="outline" asChild size="sm">
+        <Button variant="outline" asChild size="sm" className="text-xs">
           <Link href="/">
-            <span> {/* Wrap icon and text in a single span */}
-              <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+            <span>
+              <ArrowLeft className="mr-1 h-3 w-3" />
               Back to Library
             </span>
           </Link>
@@ -67,26 +67,26 @@ export default async function GamePage({ params }: GamePageProps) {
       </div>
 
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4">
-          <p className="text-xs sm:text-sm text-foreground leading-relaxed">{game.description}</p>
+        <CardContent className="p-2.5 sm:p-3 text-xs leading-relaxed">
+          <p>{game.description}</p>
         </CardContent>
       </Card>
       
-      <Separator className="my-5 sm:my-6" />
+      <Separator className="my-4 sm:my-5" />
 
-      <section id="play-game" className="scroll-mt-16">
-        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center text-primary tracking-tight"> 
-          <Eye size={20} className="inline-block mr-1.5 mb-0.5 text-accent sm:size-22" /> Play Now! 
+      <section id="play-game" className="scroll-mt-12 sm:scroll-mt-16">
+        <h2 className="text-base sm:text-lg font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight"> 
+          <Eye size={18} className="inline-block mr-1 mb-0.5 text-accent sm:size-20" /> Play Now! 
         </h2>
         <Emulator rvmGameId={game.rvmGameId} title={game.title} />
       </section>
       
       {game.screenshots && game.screenshots.length > 0 && (
         <>
-          <Separator className="my-5 sm:my-6" />
-          <section id="screenshots" className="scroll-mt-16">
-            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center text-primary tracking-tight">Screenshots</h2> 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <Separator className="my-4 sm:my-5" />
+          <section id="screenshots" className="scroll-mt-12 sm:scroll-mt-16">
+            <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-center text-primary tracking-tight">Screenshots</h2> 
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {game.screenshots.map((screenshot, index) => (
                 <div key={index} className="aspect-video relative rounded-lg overflow-hidden shadow-lg border border-border group transition-all duration-300 hover:scale-105 hover:shadow-primary/30">
                   <Image
@@ -99,7 +99,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     loading="lazy"
                   />
                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Eye size={32} className="text-white/80" /> 
+                    <Eye size={28} className="text-white/80" /> 
                   </div>
                 </div>
               ))}
@@ -108,9 +108,9 @@ export default async function GamePage({ params }: GamePageProps) {
         </>
       )}
 
-      <Separator className="my-5 sm:my-6" />
+      <Separator className="my-4 sm:my-5" />
 
-      <section id="related-games" className="scroll-mt-16">
+      <section id="related-games" className="scroll-mt-12 sm:scroll-mt-16">
         <RelatedGames gameTitle={game.title} />
       </section>
     </div>

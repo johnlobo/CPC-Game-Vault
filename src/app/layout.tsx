@@ -32,13 +32,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pressStart2P.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
+      <body className={`${pressStart2P.variable} antialiased bg-background text-foreground min-h-screen flex flex-col text-xs sm:text-sm`}> {/* Base text size */}
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-6 sm:py-8"> {/* Adjusted padding */}
+        <main className="flex-grow container mx-auto px-4 py-5 sm:py-6"> {/* Adjusted padding */}
           {children}
         </main>
         <Toaster />
-        <footer className="py-4 sm:py-5 text-center text-muted-foreground text-xs border-t border-border mt-auto"> {/* Adjusted padding */}
+        <footer className="py-3 sm:py-4 text-center text-muted-foreground text-xs border-t border-border mt-auto"> {/* Adjusted padding & font size */}
           <p>&copy; {new Date().getFullYear()} CPC Game Vault. All rights reserved.</p>
           <p>Powered by Retro Virtual Machine &amp; Genkit AI.</p>
         </footer>

@@ -26,23 +26,23 @@ export function GameCard({ game }: GameCardProps) {
             />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow p-4 space-y-2">
-          <CardTitle className="text-sm line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
-          <div className="flex items-center text-xs text-muted-foreground space-x-2">
+        <CardContent className="flex-grow p-3 space-y-1.5">
+          <CardTitle className="text-xs line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
+          <div className="flex items-center text-xs text-muted-foreground space-x-1.5">
             <div className="flex items-center">
-              <CalendarDays size={12} className="mr-1" />
+              <CalendarDays size={10} className="mr-0.5" />
               <span>{game.year}</span>
             </div>
             <div className="flex items-center">
-              <Tag size={12} className="mr-1" />
+              <Tag size={10} className="mr-0.5" />
               <span className="line-clamp-1">{game.genre}</span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground line-clamp-2">{game.publisher}</p>
         </CardContent>
-        <CardFooter className="p-4 pt-2">
-          <div className="text-xs text-accent flex items-center font-medium"> {/* Reduced text size here */}
-            Play Game <ArrowRight size={14} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-1" /> {/* Adjusted icon size */}
+        <CardFooter className="p-3 pt-1">
+          <div className="text-xs text-accent flex items-center font-medium">
+            Play <ArrowRight size={12} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </div>
         </CardFooter>
       </Card>
