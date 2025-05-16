@@ -1,3 +1,4 @@
+
 export interface Game {
   id: string;
   title: string;
@@ -12,7 +13,7 @@ export interface Game {
   publisher: string;
 }
 
-// IMPORTANT: Replace the placeholder diskUrl values with actual URLs to your .dsk files.
+// IMPORTANT: Ensure your .dsk files are placed in the `public/gamez/` directory.
 export const games: Game[] = [
   {
     id: "Ams3s",
@@ -25,7 +26,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00080",
-    diskUrl: "https://example.com/cpc-disks/Ams3s.dsk", // Placeholder - REPLACE
+    diskUrl: "/gamez/Ams3s.dsk", // Updated path
     genre: "Puzzle",
     year: 2015,
     developer: "John Lobo",
@@ -40,8 +41,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
       "https://placehold.co/600x400.png",
     ],
-    rvmGameId: "00053", 
-    diskUrl: "https://example.com/cpc-disks/batman-the-movie.dsk", // Placeholder - REPLACE
+    rvmGameId: "00053",
+    diskUrl: "/gamez/batman-the-movie.dsk", // Updated path
     genre: "Action-adventure",
     year: 1989,
     developer: "Ocean Software",
@@ -57,7 +58,7 @@ export const games: Game[] = [
         "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00031",
-    diskUrl: "https://example.com/cpc-disks/arkanoid.dsk", // Placeholder - REPLACE
+    diskUrl: "/gamez/arkanoid.dsk", // Updated path
     genre: "Breakout clone",
     year: 1986,
     developer: "Taito",
@@ -73,7 +74,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00292",
-    diskUrl: "https://example.com/cpc-disks/gryzor.dsk", // Placeholder - REPLACE
+    diskUrl: "/gamez/gryzor.dsk", // Updated path
     genre: "Run and gun",
     year: 1987,
     developer: "Konami",
@@ -89,7 +90,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00556",
-    diskUrl: "https://example.com/cpc-disks/sorcery.dsk", // Placeholder - REPLACE
+    diskUrl: "/gamez/sorcery.dsk", // Updated path
     genre: "Action-adventure",
     year: 1985,
     developer: "Virgin Games",
