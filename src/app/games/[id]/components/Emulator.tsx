@@ -29,7 +29,7 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const currentContainer = containerRef.current; // Capture for cleanup closure
+    const currentContainer = containerRef.current; 
 
     if (!currentContainer) {
       setErrorMessage("Error: Emulator container element not found.");
@@ -37,7 +37,6 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
       return;
     }
 
-    // Clear previous content and set to loading for the new instance
     currentContainer.innerHTML = '';
     setPlayerStatus('loading');
     setErrorMessage(null);
@@ -53,8 +52,10 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
           warpFrames: 20 * 50,
           waitAudio: true,
         });
-        // Player has successfully initialized and taken over the container's DOM
         setPlayerStatus('success');
+        // Attempt to focus the container after successful initialization.
+        // The user might still need to click the canvas due to waitAudio: true.
+        currentContainer.focus(); 
       } catch (error) {
         console.error("Error initializing RVM Player:", error);
         const msg = error instanceof Error ? error.message : "An unknown error occurred during initialization.";
@@ -67,33 +68,38 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
       setPlayerStatus('error');
     }
 
-    // Cleanup function: will run when the component unmounts
-    // (e.g., due to key change in parent or navigating away)
     return () => {
       if (currentContainer) {
-        // Clear the container to remove the RVM player's DOM elements
         currentContainer.innerHTML = '';
       }
     };
-  }, [diskUrl]); // Effect depends on diskUrl. Title is used for the div's title attribute, not rvmPlayer options.
+  }, [diskUrl]); 
+
+  const handleContainerClick = () => {
+    if (containerRef.current) {
+      const canvas = containerRef.current.querySelector('canvas');
+      if (canvas) {
+        canvas.focus();
+      } else {
+        containerRef.current.focus();
+      }
+    }
+  };
 
   return (
     <div
       ref={containerRef}
-      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden"
+      tabIndex={0} // Make the container focusable
+      onClick={handleContainerClick} // Handle clicks to attempt focus
+      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden outline-none" // Added outline-none for focused state
       style={{ 
         position: 'relative', 
         width: '800px', 
         height: '600px', 
-        border: '2px solid hsl(var(--primary))', // Themed border
+        border: '2px solid hsl(var(--primary))', 
       }}
-      title={`${title} - Amstrad CPC Emulator`}
+      title={`${title} - Amstrad CPC Emulator. Click to activate and control.`} // Added hint in title
     >
-      {/* 
-        React renders content inside this div ONLY IF the player is not 'success'.
-        Once playerStatus is 'success', this block renders nothing, and the RVM player
-        has full control over the containerRef.current's inner DOM.
-      */}
       {playerStatus === 'loading' && (
         <div className="flex items-center justify-center h-full text-center p-4">
           <p className="text-muted-foreground">Loading emulator...</p>
@@ -104,6 +110,9 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
           <p className="text-destructive">{errorMessage}</p>
         </div>
       )}
+      {/* When playerStatus is 'success', React renders nothing here, 
+          allowing RVM player to control the container's DOM. 
+          The title attribute now suggests clicking to activate. */}
     </div>
   );
 }
