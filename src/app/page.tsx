@@ -8,10 +8,10 @@ export default async function HomePage() {
   return (
     <div className="space-y-8">
       <section className="text-center py-8 rounded-lg bg-card shadow-md">
-        <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-primary tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 text-primary tracking-tight">
           Welcome to the CPC Game Vault!
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto px-4">
           Browse, discover, and play classic Amstrad CPC games directly in your browser.
         </p>
       </section>

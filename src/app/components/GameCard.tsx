@@ -27,7 +27,7 @@ export function GameCard({ game }: GameCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 space-y-2">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
+          <CardTitle className="text-base line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
           <div className="flex items-center text-xs text-muted-foreground space-x-2">
             <div className="flex items-center">
               <CalendarDays size={12} className="mr-1" />

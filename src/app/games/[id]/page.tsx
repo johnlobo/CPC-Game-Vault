@@ -44,46 +44,47 @@ export default async function GamePage({ params }: GamePageProps) {
   }
 
   return (
-    <div className="space-y-10 sm:space-y-16">
-      <header className="text-center space-y-4 pt-4">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
+    <div className="space-y-10 sm:space-y-12"> {/* Reduced vertical spacing slightly */}
+      <header className="text-center space-y-3 pt-4"> {/* Reduced vertical spacing slightly */}
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
         <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
-          <Badge variant="secondary" className="px-3 py-1 text-sm"><CalendarDays size={14} className="mr-1.5" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-3 py-1 text-sm"><Tag size={14} className="mr-1.5" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-3 py-1 text-sm"><Code2 size={14} className="mr-1.5" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-3 py-1 text-sm"><Users size={14} className="mr-1.5" /> {game.publisher}</Badge>
+          {/* Badge text size is generally small (text-xs by default from component), so it should be fine */}
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs sm:px-3 sm:py-1"><CalendarDays size={12} className="mr-1 sm:mr-1.5" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs sm:px-3 sm:py-1"><Tag size={12} className="mr-1 sm:mr-1.5" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs sm:px-3 sm:py-1"><Code2 size={12} className="mr-1 sm:mr-1.5" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs sm:px-3 sm:py-1"><Users size={12} className="mr-1 sm:mr-1.5" /> {game.publisher}</Badge>
         </div>
       </header>
 
       <div>
-        <Button variant="outline" asChild size="lg">
+        <Button variant="outline" asChild size="default"> {/* Changed size to default */}
           <Link href="/">
-            <ArrowLeft className="mr-2 h-5 w-5" />
+            <ArrowLeft className="mr-2 h-4 w-4" /> {/* Adjusted icon size */}
             Back to Game Library
           </Link>
         </Button>
       </div>
 
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-6 sm:p-8">
-          <p className="text-base sm:text-lg text-foreground leading-relaxed">{game.description}</p>
+        <CardContent className="p-4 sm:p-6"> {/* Adjusted padding */}
+          <p className="text-sm sm:text-base text-foreground leading-relaxed">{game.description}</p>
         </CardContent>
       </Card>
       
-      <Separator className="my-8 sm:my-12" />
+      <Separator className="my-6 sm:my-8" /> {/* Adjusted margin */}
 
       <section id="play-game" className="scroll-mt-20">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-primary tracking-tight">
-          <Eye size={32} className="inline-block mr-2 mb-1 text-accent" /> Play Now!
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-primary tracking-tight"> {/* Adjusted size and margin */}
+          <Eye size={28} className="inline-block mr-2 mb-1 text-accent" /> Play Now! {/* Adjusted icon size */}
         </h2>
         <Emulator rvmGameId={game.rvmGameId} title={game.title} />
       </section>
       
       {game.screenshots && game.screenshots.length > 0 && (
         <>
-          <Separator className="my-8 sm:my-12" />
+          <Separator className="my-6 sm:my-8" /> {/* Adjusted margin */}
           <section id="screenshots" className="scroll-mt-20">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-primary tracking-tight">Screenshots</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center text-primary tracking-tight">Screenshots</h2> {/* Adjusted size and margin */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {game.screenshots.map((screenshot, index) => (
                 <div key={index} className="aspect-video relative rounded-lg overflow-hidden shadow-lg border border-border group transition-all duration-300 hover:scale-105 hover:shadow-primary/30">
@@ -97,7 +98,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     loading="lazy"
                   />
                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Eye size={48} className="text-white/80" />
+                    <Eye size={40} className="text-white/80" /> {/* Adjusted icon size */}
                   </div>
                 </div>
               ))}
@@ -106,7 +107,7 @@ export default async function GamePage({ params }: GamePageProps) {
         </>
       )}
 
-      <Separator className="my-8 sm:my-12" />
+      <Separator className="my-6 sm:my-8" /> {/* Adjusted margin */}
 
       <section id="related-games" className="scroll-mt-20">
         <RelatedGames gameTitle={game.title} />
