@@ -1,14 +1,17 @@
+
 import type { Game } from '@/data/games';
 import { getGameById } from '@/data/games';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface GamePageProps {
   params: { id: string };
@@ -51,6 +54,15 @@ export default async function GamePage({ params }: GamePageProps) {
           <Badge variant="secondary" className="px-3 py-1 text-sm"><Users size={14} className="mr-1.5" /> {game.publisher}</Badge>
         </div>
       </header>
+
+      <div>
+        <Button variant="outline" asChild size="lg">
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-5 w-5" />
+            Back to Game Library
+          </Link>
+        </Button>
+      </div>
 
       <Card className="overflow-hidden shadow-xl">
         <CardContent className="p-6 sm:p-8">
