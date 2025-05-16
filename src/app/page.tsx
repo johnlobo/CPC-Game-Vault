@@ -8,10 +8,10 @@ export default async function HomePage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <section className="text-center py-4 sm:py-6 rounded-lg bg-card shadow-md">
-        <h1 className="text-xl sm:text-2xl font-extrabold mb-2 text-primary tracking-tight"> {/* Adjusted text size */}
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-2 text-primary tracking-tight"> {/* Adjusted text size */}
           Welcome to the CPC Game Vault!
         </h1>
-        <p className="text-sm text-muted-foreground max-w-xl mx-auto px-4"> {/* Adjusted text size */}
+        <p className="text-base text-muted-foreground max-w-xl mx-auto px-4"> {/* Adjusted text size */}
           Browse, discover, and play classic Amstrad CPC games directly in your browser.
         </p>
       </section>
@@ -23,11 +23,11 @@ export default async function HomePage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground py-8 text-sm">No games available at the moment. Check back soon!</p> // Adjusted text size
+        <p className="text-center text-muted-foreground py-8 text-base">No games available at the moment. Check back soon!</p> // Adjusted text size
       )}
        {allGames.length > 4 && (
         <div className="text-center mt-4">
-          <p className="text-sm text-muted-foreground/80"> {/* Adjusted text size */}
+          <p className="text-base text-muted-foreground/80"> {/* Adjusted text size */}
             And {allGames.length - 4} more games waiting to be explored...
           </p>
         </div>
