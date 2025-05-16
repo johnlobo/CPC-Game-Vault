@@ -1,18 +1,16 @@
 import type { Metadata } from 'next';
-import { Press_Start_2P } from 'next/font/google'; // Classic pixel font
+import { Roboto } from 'next/font/google'; // Import Roboto
 import Script from 'next/script';
 import './globals.css';
 import { Header } from '@/app/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 
-// Using Press Start 2P for a retro game feel
-const pressStart2P = Press_Start_2P({
-  weight: ['400'],
+// Configure Roboto font
+const roboto = Roboto({
+  weight: ['400', '500', '700'], // Specify desired weights
   subsets: ['latin'],
-  variable: '--font-geist-mono', // Re-using geist-mono variable for simplicity, but it's Press Start 2P
-  display: 'swap',
+  display: 'swap', // Improve font loading behavior
 });
-
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +34,7 @@ export default function RootLayout({
       <head>
         <Script src='https://cdn.rvmplayer.org/rvmplayer.cpc6128.0.1.1.min.js' strategy="beforeInteractive" />
       </head>
-      <body className={`${pressStart2P.variable} antialiased bg-background text-foreground min-h-screen flex flex-col text-xs`}> {/* Base text size set to xs */}
+      <body className={`${roboto.className} antialiased bg-background text-foreground min-h-screen flex flex-col text-xs`}> {/* Apply Roboto class, keep text-xs base */}
         <Header />
         <main className="flex-grow container mx-auto px-4 py-4 sm:py-5"> {/* Adjusted padding */}
           {children}
