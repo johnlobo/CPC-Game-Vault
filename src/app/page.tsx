@@ -2,7 +2,8 @@ import { getGames } from '@/data/games';
 import { GameCard } from '@/app/components/GameCard';
 
 export default async function HomePage() {
-  const games = await getGames();
+  const allGames = await getGames();
+  const gamesToDisplay = allGames.slice(0, 4);
 
   return (
     <div className="space-y-8">
@@ -15,14 +16,21 @@ export default async function HomePage() {
         </p>
       </section>
       
-      {games.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {games.map((game) => (
+      {gamesToDisplay.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {gamesToDisplay.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
       ) : (
         <p className="text-center text-muted-foreground py-10">No games available at the moment. Check back soon!</p>
+      )}
+       {allGames.length > 4 && (
+        <div className="text-center mt-8">
+          <p className="text-muted-foreground">
+            And {allGames.length - 4} more games waiting to be explored...
+          </p>
+        </div>
       )}
     </div>
   );

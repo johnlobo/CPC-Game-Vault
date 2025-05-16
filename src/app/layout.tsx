@@ -1,18 +1,17 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Press_Start_2P } from 'next/font/google'; // Classic pixel font
 import './globals.css';
 import { Header } from '@/app/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// Using Press Start 2P for a retro game feel
+const pressStart2P = Press_Start_2P({
+  weight: ['400'],
   subsets: ['latin'],
+  variable: '--font-geist-mono', // Re-using geist-mono variable for simplicity, but it's Press Start 2P
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -33,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
+      <body className={`${pressStart2P.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
