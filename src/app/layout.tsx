@@ -34,13 +34,13 @@ export default function RootLayout({
       <head>
         <Script src='https://cdn.rvmplayer.org/rvmplayer.cpc6128.0.1.1.min.js' strategy="beforeInteractive" />
       </head>
-      <body className={`${roboto.className} antialiased bg-background text-foreground min-h-screen flex flex-col text-xs`}> {/* Apply Roboto class, keep text-xs base */}
+      <body className={`${roboto.className} antialiased bg-background text-foreground min-h-screen flex flex-col text-sm`}> {/* Apply Roboto class, base text-sm */}
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-4 sm:py-5"> {/* Adjusted padding */}
+        <main className="flex-grow container mx-auto px-4 py-4 sm:py-5">
           {children}
         </main>
         <Toaster />
-        <footer className="py-2 sm:py-3 text-center text-muted-foreground text-xs border-t border-border mt-auto"> {/* Adjusted padding & font size */}
+        <footer className="py-2 sm:py-3 text-center text-muted-foreground text-sm border-t border-border mt-auto"> {/* Footer text-sm */}
           <p>&copy; {new Date().getFullYear()} CPC Game Vault. All rights reserved.</p>
           <p>Powered by Retro Virtual Machine &amp; Genkit AI.</p>
         </footer>
