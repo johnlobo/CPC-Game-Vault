@@ -65,12 +65,6 @@ export default async function GamePage({ params }: GamePageProps) {
           </Link>
         </Button>
       </div>
-
-      <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-2 sm:p-2.5 text-xs leading-relaxed"> {/* Adjusted padding */}
-          <p>{game.description}</p>
-        </CardContent>
-      </Card>
       
       <Separator className="my-3 sm:my-4" /> {/* Adjusted margin */}
 
@@ -81,6 +75,14 @@ export default async function GamePage({ params }: GamePageProps) {
         {/* Ensure game.diskUrl is passed to the Emulator */}
         <Emulator diskUrl={game.diskUrl} title={game.title} />
       </section>
+
+      <Separator className="my-3 sm:my-4" /> {/* Adjusted margin */}
+      
+      <Card className="overflow-hidden shadow-xl">
+        <CardContent className="p-2 sm:p-2.5 text-xs leading-relaxed"> {/* Adjusted padding */}
+          <p>{game.description}</p>
+        </CardContent>
+      </Card>
       
       {game.screenshots && game.screenshots.length > 0 && (
         <>
