@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface EmulatorProps {
   diskUrl: string; // URL to the .dsk file
@@ -24,43 +25,49 @@ declare global {
 
 export function Emulator({ diskUrl, title }: EmulatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>("Loading emulator...");
 
   useEffect(() => {
-    // Ensure the container div and the RVM player script are available
-    if (containerRef.current && typeof window.rvmPlayer_cpc6128 === 'function') {
-      // Clear any previous emulator instance if the component re-renders with a new game
-      // This might be necessary if the RVM player doesn't clean up itself.
-      // For now, we assume it handles re-initialization or the parent component unmounts/remounts.
-      // containerRef.current.innerHTML = ''; // Simple cleanup if needed
+    // Ensure we have a container
+    if (!containerRef.current) {
+      setStatusMessage("Error: Emulator container element not found.");
+      return;
+    }
 
+    // Clear any previous player instance or message if diskUrl changes.
+    // This is important if the RVM player doesn't clean up itself when re-initialized.
+    containerRef.current.innerHTML = ''; 
+    setStatusMessage("Loading emulator..."); // Reset status message for the current attempt
+
+    if (typeof window.rvmPlayer_cpc6128 === 'function') {
       try {
         window.rvmPlayer_cpc6128(containerRef.current, {
           disk: {
             type: 'dsk',
             url: diskUrl,
           },
-          command: 'run"disc\n', // As per your snippet, might need to be dynamic
-          warpFrames: 20 * 50,   // As per your snippet
-          waitAudio: true,       // Good practice for web audio
+          command: 'run"disc\n',
+          warpFrames: 20 * 50,
+          waitAudio: true,
         });
+        // If the player initializes successfully, it will take over the container.
+        // We can clear the React-rendered status message.
+        setStatusMessage(null); 
       } catch (error) {
         console.error("Error initializing RVM Player:", error);
-        if (containerRef.current) {
-          containerRef.current.innerHTML = '<p class="text-destructive text-center p-4">Error loading emulator. Please ensure the disk URL is correct and the RVM Player script is loaded.</p>';
-        }
+        const errorMessageText = error instanceof Error ? error.message : "An unknown error occurred during initialization.";
+        setStatusMessage(`Error loading emulator: ${errorMessageText}`);
       }
-    } else if (typeof window.rvmPlayer_cpc6128 !== 'function') {
-        console.warn("RVM Player script (rvmPlayer_cpc6128) not found. Ensure it's loaded correctly.");
-         if (containerRef.current) {
-          containerRef.current.innerHTML = '<p class="text-muted-foreground text-center p-4">Emulator script not loaded. Please try refreshing.</p>';
-        }
+    } else {
+      console.warn("RVM Player script (rvmPlayer_cpc6128) not found. Ensure it's loaded correctly via the <Script> tag in layout.tsx.");
+      setStatusMessage("Emulator script not loaded. Please try refreshing. If the problem persists, the script might be blocked or unavailable.");
     }
   }, [diskUrl]); // Re-run the effect if diskUrl changes
 
   return (
     <div
       ref={containerRef}
-      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden" // Added some existing styling
+      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden"
       style={{ 
         position: 'relative', 
         width: '800px', 
@@ -69,10 +76,15 @@ export function Emulator({ diskUrl, title }: EmulatorProps) {
       }}
       title={`${title} - Amstrad CPC Emulator`}
     >
-      {/* RVM Player will initialize here. Adding a placeholder message. */}
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Loading emulator...</p>
-      </div>
+      {/* Display status message if RVM player hasn't taken over or if there's an error */}
+      {statusMessage && (
+        <div className="flex items-center justify-center h-full text-center p-4">
+          <p className={statusMessage.toLowerCase().startsWith("error:") || statusMessage.toLowerCase().startsWith("emulator script not loaded") ? "text-destructive" : "text-muted-foreground"}>
+            {statusMessage}
+          </p>
+        </div>
+      )}
+      {/* When statusMessage is null, this space is left for the RVM Player to render into containerRef.current */}
     </div>
   );
 }
