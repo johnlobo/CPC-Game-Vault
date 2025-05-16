@@ -56,21 +56,23 @@ export default async function GamePage({ params }: GamePageProps) {
       </header>
 
       <div>
-        <Button variant="outline" asChild size="sm"> {/* Changed size to sm */}
+        <Button variant="outline" asChild size="sm">
           <Link href="/">
-            <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> {/* Adjusted icon size */}
-            Back to Library
+            <span> {/* Wrap icon and text in a single span */}
+              <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+              Back to Library
+            </span>
           </Link>
         </Button>
       </div>
 
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4"> {/* Adjusted padding */}
+        <CardContent className="p-3 sm:p-4">
           <p className="text-xs sm:text-sm text-foreground leading-relaxed">{game.description}</p>
         </CardContent>
       </Card>
       
-      <Separator className="my-5 sm:my-6" /> {/* Adjusted margin */}
+      <Separator className="my-5 sm:my-6" />
 
       <section id="play-game" className="scroll-mt-16">
         <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center text-primary tracking-tight"> 
@@ -81,7 +83,7 @@ export default async function GamePage({ params }: GamePageProps) {
       
       {game.screenshots && game.screenshots.length > 0 && (
         <>
-          <Separator className="my-5 sm:my-6" /> {/* Adjusted margin */}
+          <Separator className="my-5 sm:my-6" />
           <section id="screenshots" className="scroll-mt-16">
             <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center text-primary tracking-tight">Screenshots</h2> 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -106,7 +108,7 @@ export default async function GamePage({ params }: GamePageProps) {
         </>
       )}
 
-      <Separator className="my-5 sm:my-6" /> {/* Adjusted margin */}
+      <Separator className="my-5 sm:my-6" />
 
       <section id="related-games" className="scroll-mt-16">
         <RelatedGames gameTitle={game.title} />
