@@ -11,7 +11,9 @@ export default function GameNotFound() {
         Oops! We couldn&apos;t find the Amstrad CPC game you were looking for. It might have been lost in the digital attic or never existed in our vault.
       </p>
       <Button asChild size="sm" className="text-sm"> {/* Button text-sm */}
-        <Link href="/">Return to Game Library</Link>
+        <Link href="/">
+          <span>Return to Game Library</span>
+        </Link>
       </Button>
     </div>
   );

@@ -11,7 +11,9 @@ export default function NotFound() {
         It seems you&apos;ve ventured into uncharted territory. The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
       <Button asChild size="sm" variant="default" className="text-sm"> {/* Button text-sm */}
-        <Link href="/">Go Back to Home</Link>
+        <Link href="/">
+          <span>Go Back to Home</span>
+        </Link>
       </Button>
     </div>
   )
