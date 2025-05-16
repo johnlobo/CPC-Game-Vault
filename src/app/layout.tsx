@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Press_Start_2P } from 'next/font/google'; // Classic pixel font
+import Script from 'next/script';
 import './globals.css';
 import { Header } from '@/app/components/Header';
 import { Toaster } from '@/components/ui/toaster';
@@ -32,6 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script src='https://cdn.rvmplayer.org/rvmplayer.cpc6128.0.1.1.min.js' strategy="beforeInteractive" />
+      </head>
       <body className={`${pressStart2P.variable} antialiased bg-background text-foreground min-h-screen flex flex-col text-xs`}> {/* Base text size set to xs */}
         <Header />
         <main className="flex-grow container mx-auto px-4 py-4 sm:py-5"> {/* Adjusted padding */}

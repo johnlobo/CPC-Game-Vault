@@ -4,13 +4,15 @@ export interface Game {
   description: string;
   coverImage: string;
   screenshots: string[];
-  rvmGameId: string;
+  rvmGameId: string; // Kept for potential other uses, or if old emulator is reinstated
+  diskUrl: string; // New field for the .dsk file URL
   genre: string;
   year: number;
   developer: string;
   publisher: string;
 }
 
+// IMPORTANT: Replace the placeholder diskUrl values with actual URLs to your .dsk files.
 export const games: Game[] = [
   {
     id: "Ams3s",
@@ -23,6 +25,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00080",
+    diskUrl: "https://example.com/cpc-disks/Ams3s.dsk", // Placeholder - REPLACE
     genre: "Puzzle",
     year: 2015,
     developer: "John Lobo",
@@ -37,7 +40,8 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
       "https://placehold.co/600x400.png",
     ],
-    rvmGameId: "00053", // RVM ID for Batman The Movie (1989)
+    rvmGameId: "00053", 
+    diskUrl: "https://example.com/cpc-disks/batman-the-movie.dsk", // Placeholder - REPLACE
     genre: "Action-adventure",
     year: 1989,
     developer: "Ocean Software",
@@ -53,6 +57,7 @@ export const games: Game[] = [
         "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00031",
+    diskUrl: "https://example.com/cpc-disks/arkanoid.dsk", // Placeholder - REPLACE
     genre: "Breakout clone",
     year: 1986,
     developer: "Taito",
@@ -68,6 +73,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00292",
+    diskUrl: "https://example.com/cpc-disks/gryzor.dsk", // Placeholder - REPLACE
     genre: "Run and gun",
     year: 1987,
     developer: "Konami",
@@ -83,6 +89,7 @@ export const games: Game[] = [
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00556",
+    diskUrl: "https://example.com/cpc-disks/sorcery.dsk", // Placeholder - REPLACE
     genre: "Action-adventure",
     year: 1985,
     developer: "Virgin Games",
