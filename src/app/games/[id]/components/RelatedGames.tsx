@@ -46,8 +46,8 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-6 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" /> 
+      <div className="flex flex-col items-center justify-center py-4 text-center"> {/* Adjusted padding */}
+        <Loader2 className="h-5 w-5 animate-spin text-primary mb-1.5" />  {/* Adjusted size and margin */}
         <p className="text-xs text-muted-foreground">Summoning AI...</p>
         <p className="text-xs text-muted-foreground/70">Please wait.</p>
       </div>
@@ -56,7 +56,7 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
 
   if (error) {
     return (
-       <Alert variant="destructive" className="my-4">
+       <Alert variant="destructive" className="my-3"> {/* Adjusted margin */}
         <Terminal className="h-3 w-3" /> 
         <AlertTitle className="text-xs">Recommendation Error</AlertTitle>
         <AlertDescription className="text-xs">{error}</AlertDescription>
@@ -66,7 +66,7 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
 
   if (!recommendations || recommendations.relatedGames.length === 0) {
     return (
-      <Alert className="my-4">
+      <Alert className="my-3"> {/* Adjusted margin */}
         <AlertTriangle className="h-3 w-3" /> 
         <AlertTitle className="text-xs">No Recommendations</AlertTitle>
         <AlertDescription className="text-xs">We couldn&apos;t find any specific recommendations for this game.</AlertDescription>
@@ -75,15 +75,15 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-base font-bold text-center text-primary tracking-tight">You Might Also Like</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-3"> {/* Adjusted spacing */}
+      <h2 className="text-sm font-bold text-center text-primary tracking-tight">You Might Also Like</h2> {/* Adjusted text size */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"> {/* Adjusted gap */}
         {recommendations.relatedGames.map((game, index) => (
           <Card key={index} className="bg-card/80 hover:shadow-xl transition-shadow duration-300 flex flex-col">
-            <CardHeader className="pb-1.5 pt-3 px-3">
-              <CardTitle className="text-sm text-accent">{game.title}</CardTitle>
+            <CardHeader className="pb-1 pt-2 px-2"> {/* Adjusted padding */}
+              <CardTitle className="text-xs text-accent">{game.title}</CardTitle> {/* Adjusted text size */}
             </CardHeader>
-            <CardContent className="flex-grow px-3 pb-3">
+            <CardContent className="flex-grow px-2 pb-2"> {/* Adjusted padding */}
               <CardDescription className="text-xs text-muted-foreground">{game.description}</CardDescription>
             </CardContent>
             {/* 

@@ -13,20 +13,20 @@ export interface Game {
 
 export const games: Game[] = [
   {
-    id: "bomb-jack",
-    title: "Bomb Jack",
-    description: "Bomb Jack is an arcade platform game by Tehkan. Players control Jack, who must collect all the bombs on the screen to progress. The game features various enemies and power-ups.",
+    id: "Ams3s",
+    title: "Ams 3s",
+    description: "Amsthrees is the free adaptation of the mobile platforms game Threes.The main goal of the game is to slide cards in a grid to combine them to create the highest multiple of three possible.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-      "https://placehold.co/600x400.png",
+      "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png",
       "https://placehold.co/600x400.png",
       "https://placehold.co/600x400.png",
     ],
     rvmGameId: "00080",
-    genre: "Platform",
-    year: 1984,
-    developer: "Tehkan",
-    publisher: "Elite Systems",
+    genre: "Puzzle",
+    year: 2015,
+    developer: "John Lobo",
+    publisher: "Glasnost Corp.",
   },
   {
     id: "batman-the-movie",

@@ -17,7 +17,7 @@ body {
     --popover: 220 15% 8%;
     --popover-foreground: 120 100% 75%;
 
-    --primary: 130 80% 50%; /* Strong, classic CPC green */
+    --primary: 120 75% 50%; /* Strong, classic CPC green */
     --primary-foreground: 0 0% 100%; /* White for text on primary green */
 
     --secondary: 50 100% 55%; /* Bright CPC yellow */

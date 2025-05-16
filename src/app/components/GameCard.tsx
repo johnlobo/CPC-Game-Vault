@@ -26,8 +26,8 @@ export function GameCard({ game }: GameCardProps) {
             />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow p-3 space-y-1.5">
-          <CardTitle className="text-xs line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
+        <CardContent className="flex-grow p-2 space-y-1"> {/* Adjusted padding and spacing */}
+          <CardTitle className="text-sm line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle> {/* Adjusted text size */}
           <div className="flex items-center text-xs text-muted-foreground space-x-1.5">
             <div className="flex items-center">
               <CalendarDays size={10} className="mr-0.5" />
@@ -40,9 +40,9 @@ export function GameCard({ game }: GameCardProps) {
           </div>
           <p className="text-xs text-muted-foreground line-clamp-2">{game.publisher}</p>
         </CardContent>
-        <CardFooter className="p-3 pt-1">
+        <CardFooter className="p-2 pt-0.5"> {/* Adjusted padding */}
           <div className="text-xs text-accent flex items-center font-medium">
-            Play <ArrowRight size={12} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+            Play <ArrowRight size={10} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" /> {/* Adjusted icon size */}
           </div>
         </CardFooter>
       </Card>
