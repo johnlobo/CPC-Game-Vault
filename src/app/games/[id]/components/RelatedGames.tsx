@@ -46,45 +46,45 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-10 text-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary mb-3" /> {/* Adjusted size */}
-        <p className="text-base text-muted-foreground">Summoning AI for recommendations...</p>
-        <p className="text-xs text-muted-foreground/70">Please wait a moment.</p>
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2.5" /> 
+        <p className="text-sm text-muted-foreground">Summoning AI...</p>
+        <p className="text-xs text-muted-foreground/70">Please wait.</p>
       </div>
     );
   }
 
   if (error) {
     return (
-       <Alert variant="destructive" className="my-6">
-        <Terminal className="h-4 w-4" /> {/* Adjusted size */}
-        <AlertTitle className="text-base">Recommendation Error</AlertTitle>
-        <AlertDescription className="text-sm">{error}</AlertDescription> {/* Added text-sm */}
+       <Alert variant="destructive" className="my-5">
+        <Terminal className="h-3.5 w-3.5" /> 
+        <AlertTitle className="text-sm">Recommendation Error</AlertTitle>
+        <AlertDescription className="text-xs">{error}</AlertDescription>
       </Alert>
     );
   }
 
   if (!recommendations || recommendations.relatedGames.length === 0) {
     return (
-      <Alert className="my-6">
-        <AlertTriangle className="h-4 w-4" /> {/* Adjusted size */}
-        <AlertTitle className="text-base">No Recommendations</AlertTitle>
-        <AlertDescription className="text-sm">We couldn&apos;t find any specific recommendations for this game at the moment.</AlertDescription> {/* Added text-sm */}
+      <Alert className="my-5">
+        <AlertTriangle className="h-3.5 w-3.5" /> 
+        <AlertTitle className="text-sm">No Recommendations</AlertTitle>
+        <AlertDescription className="text-xs">We couldn&apos;t find any specific recommendations for this game.</AlertDescription>
       </Alert>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-bold text-center text-primary tracking-tight">You Might Also Like</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-5">
+      <h2 className="text-lg font-bold text-center text-primary tracking-tight">You Might Also Like</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {recommendations.relatedGames.map((game, index) => (
           <Card key={index} className="bg-card/80 hover:shadow-xl transition-shadow duration-300 flex flex-col">
-            <CardHeader>
-              <CardTitle className="text-lg text-accent">{game.title}</CardTitle>
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-base text-accent">{game.title}</CardTitle>
             </CardHeader>
-            <CardContent className="flex-grow">
-              <CardDescription className="text-sm text-muted-foreground">{game.description}</CardDescription>
+            <CardContent className="flex-grow px-4 pb-4">
+              <CardDescription className="text-xs text-muted-foreground">{game.description}</CardDescription>
             </CardContent>
             {/* 
             <CardFooter>
