@@ -56,11 +56,11 @@ export default async function GamePage({ params }: GamePageProps) {
       </header>
 
       <div>
-        <Button variant="outline" asChild size="sm" className="text-sm"> {/* Button text-sm */}
+        <Button variant="outline" asChild size="sm" className="text-sm">
           <Link href="/">
-            <span>
-              <ArrowLeft className="mr-1 h-4 w-4" /> {/* Icon size h-4 w-4 */}
-              Back to Library
+            <span className="inline-flex items-center"> {/* Ensured wrapper span */}
+              <ArrowLeft className="mr-1 h-4 w-4" />
+              <span>Back to Library</span> {/* Explicit span for text */}
             </span>
           </Link>
         </Button>
@@ -75,7 +75,7 @@ export default async function GamePage({ params }: GamePageProps) {
         {/* Ensure game.diskUrl is passed to the Emulator and key is set */}
         <Emulator key={game.diskUrl} diskUrl={game.diskUrl} title={game.title} />
       </section>
-
+      
       <Separator className="my-3 sm:my-4" />
       
       <Card className="overflow-hidden shadow-xl">
