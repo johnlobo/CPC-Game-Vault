@@ -47,9 +47,9 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-4 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary mb-1.5" />  {/* Loader icon h-6 w-6 */}
-        <p className="text-base text-muted-foreground">Summoning AI...</p> {/* Loader text-base */}
-        <p className="text-base text-muted-foreground/70">Please wait.</p> {/* Loader text-base */}
+        <Loader2 className="h-7 w-7 animate-spin text-primary mb-1.5" />  {/* Loader icon h-7 w-7 */}
+        <p className="text-lg text-muted-foreground">Summoning AI...</p> {/* Loader text-lg */}
+        <p className="text-lg text-muted-foreground/70">Please wait.</p> {/* Loader text-lg */}
       </div>
     );
   }
@@ -57,9 +57,9 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
   if (error) {
     return (
        <Alert variant="destructive" className="my-3">
-        <Terminal className="h-5 w-5" /> {/* Alert icon h-5 w-5 */}
-        <AlertTitle className="text-base">Recommendation Error</AlertTitle> {/* Alert title text-base */}
-        <AlertDescription className="text-base">{error}</AlertDescription> {/* Alert desc text-base */}
+        <Terminal className="h-6 w-6" /> {/* Alert icon h-6 w-6 */}
+        <AlertTitle className="text-lg">Recommendation Error</AlertTitle> {/* Alert title text-lg */}
+        <AlertDescription className="text-lg">{error}</AlertDescription> {/* Alert desc text-lg */}
       </Alert>
     );
   }
@@ -67,24 +67,24 @@ export function RelatedGames({ gameTitle }: RelatedGamesProps) {
   if (!recommendations || recommendations.relatedGames.length === 0) {
     return (
       <Alert className="my-3">
-        <AlertTriangle className="h-5 w-5" /> {/* Alert icon h-5 w-5 */}
-        <AlertTitle className="text-base">No Recommendations</AlertTitle> {/* Alert title text-base */}
-        <AlertDescription className="text-base">We couldn&apos;t find any specific recommendations for this game.</AlertDescription> {/* Alert desc text-base */}
+        <AlertTriangle className="h-6 w-6" /> {/* Alert icon h-6 w-6 */}
+        <AlertTitle className="text-lg">No Recommendations</AlertTitle> {/* Alert title text-lg */}
+        <AlertDescription className="text-lg">We couldn&apos;t find any specific recommendations for this game.</AlertDescription> {/* Alert desc text-lg */}
       </Alert>
     );
   }
 
   return (
     <div className="space-y-3">
-      <h2 className="text-xl font-bold text-center text-primary tracking-tight">You Might Also Like</h2> {/* Section title text-xl */}
+      <h2 className="text-2xl font-bold text-center text-primary tracking-tight">You Might Also Like</h2> {/* Section title text-2xl */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {recommendations.relatedGames.map((game, index) => (
           <Card key={index} className="bg-card/80 hover:shadow-xl transition-shadow duration-300 flex flex-col">
             <CardHeader className="pb-1 pt-2 px-2">
-              <CardTitle className="text-base text-accent">{game.title}</CardTitle> {/* Card title text-base */}
+              <CardTitle className="text-lg text-accent">{game.title}</CardTitle> {/* Card title text-lg */}
             </CardHeader>
             <CardContent className="flex-grow px-2 pb-2">
-              <CardDescription className="text-base text-muted-foreground">{game.description}</CardDescription> {/* Card desc text-base */}
+              <CardDescription className="text-lg text-muted-foreground">{game.description}</CardDescription> {/* Card desc text-lg */}
             </CardContent>
             {/* 
             <CardFooter>

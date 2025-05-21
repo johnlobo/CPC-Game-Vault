@@ -46,20 +46,20 @@ export default async function GamePage({ params }: GamePageProps) {
   return (
     <div className="space-y-4 sm:space-y-6">
       <header className="text-center space-y-1 pt-1 sm:pt-2">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
         <div className="flex flex-wrap justify-center items-center gap-1">
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-sm"><CalendarDays size={14} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-sm"><Tag size={14} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-sm"><Code2 size={14} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-sm"><Users size={14} className="mr-1" /> {game.publisher}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-base"><CalendarDays size={16} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-base"><Tag size={16} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-base"><Code2 size={16} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-base"><Users size={16} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
       <div>
-        <Button variant="outline" asChild size="sm">
+        <Button variant="outline" asChild size="default"> {/* Changed size to default */}
           <Link href="/">
             <span className="inline-flex items-center">
-              <ArrowLeft className="mr-1 h-5 w-5" />
+              <ArrowLeft className="mr-1 h-6 w-6" /> {/* Adjusted icon size */}
               <span>Back to Library</span>
             </span>
           </Link>
@@ -69,8 +69,8 @@ export default async function GamePage({ params }: GamePageProps) {
       <Separator className="my-3 sm:my-4" />
 
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12">
-        <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-2.5 text-center text-primary tracking-tight">
-          <Eye size={22} className="inline-block mr-1 mb-0.5 text-accent" /> Play Now!
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-2.5 text-center text-primary tracking-tight">
+          <Eye size={24} className="inline-block mr-1 mb-0.5 text-accent" /> Play Now!
         </h2>
         {/* Ensure game.diskUrl and game.emulatorCommand is passed to the Emulator and key is set for re-initialization on change */}
         <Emulator 
@@ -84,7 +84,7 @@ export default async function GamePage({ params }: GamePageProps) {
       <Separator className="my-3 sm:my-4" />
       
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4 text-base leading-relaxed">
+        <CardContent className="p-3 sm:p-4 text-lg leading-relaxed">
           <p>{game.description}</p>
         </CardContent>
       </Card>
@@ -93,7 +93,7 @@ export default async function GamePage({ params }: GamePageProps) {
         <>
           <Separator className="my-3 sm:my-4" />
           <section id="screenshots" className="scroll-mt-10 sm:scroll-mt-12">
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-center text-primary tracking-tight">Screenshots</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-center text-primary tracking-tight">Screenshots</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5">
               {game.screenshots.map((screenshot, index) => (
                 <div key={index} className="aspect-video relative rounded-lg overflow-hidden shadow-lg border border-border group transition-all duration-300 hover:scale-105 hover:shadow-primary/30">
@@ -107,7 +107,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     loading="lazy"
                   />
                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Eye size={28} className="text-white/80" />
+                    <Eye size={32} className="text-white/80" /> {/* Adjusted icon size */}
                   </div>
                 </div>
               ))}
