@@ -3,14 +3,14 @@
 
 import type { Game } from '@/data/games';
 import { getGameById } from '@/data/games';
-import type { Metadata } from 'next';
+// import type { Metadata } from 'next'; // Metadata generation is complex for client components
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,11 +20,6 @@ import { useEffect, useState } from 'react';
 interface GamePageProps {
   params: { id: string };
 }
-
-// Note: generateMetadata should ideally remain a server-side function if possible,
-// or data fetching for it should be done in a way compatible with client components.
-// For simplicity in this example, we'll assume getGameById can be called here,
-// but in a real app, you might fetch metadata differently for client components or keep this part server-side.
 
 // export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
 //   const game = await getGameById(params.id);
@@ -44,6 +39,7 @@ export default function GamePage({ params }: GamePageProps) {
 
   useEffect(() => {
     async function fetchGame() {
+      setGame(undefined); // Explicitly set to loading state before fetch
       const gameData = await getGameById(params.id);
       setGame(gameData);
       if (gameData) {
@@ -56,10 +52,11 @@ export default function GamePage({ params }: GamePageProps) {
   }, [params.id]);
 
   if (game === undefined) {
-    // Loading state (optional, or show a skeleton)
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-xl text-muted-foreground">Loading game details...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+        <Loader2 className="h-16 w-16 animate-spin text-primary mb-4" />
+        <p className="text-2xl text-muted-foreground">Loading game details...</p>
+        <p className="text-lg text-muted-foreground/80">Please wait a moment.</p>
       </div>
     );
   }
