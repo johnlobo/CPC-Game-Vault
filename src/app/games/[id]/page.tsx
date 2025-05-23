@@ -5,14 +5,14 @@ import { useEffect, useState, use } from 'react';
 import type { Game } from '@/data/games';
 import { getGameById } from '@/data/games';
 import Image from 'next/image';
-// Link and Button might not be needed anymore if only used for the removed button
-// ArrowLeft is definitely not needed
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
+import { CalendarDays, Code2, Tag, Users, Eye, ArrowLeft, AlertTriangle, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface GamePageProps {
@@ -60,15 +60,18 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Removed Back to Library button from here */}
-
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={28} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={28} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={28} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={28} className="mr-1" /> {game.publisher}</Badge>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-lg">
+          <Badge variant="secondary" className="px-2 py-1 text-lg"><CalendarDays size={28} className="mr-1.5" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-2 py-1 text-lg"><Tag size={28} className="mr-1.5" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-2 py-1 text-lg"><Code2 size={28} className="mr-1.5" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-2 py-1 text-lg"><Users size={28} className="mr-1.5" /> {game.publisher}</Badge>
+          {game.status === 'wip' && (
+            <Badge variant="secondary" className="px-2 py-1 text-lg border-2 border-wip text-wip-foreground bg-wip hover:bg-wip/90">
+              <Info size={28} className="mr-1.5" /> Work in Progress
+            </Badge>
+          )}
         </div>
       </header>
       
@@ -85,7 +88,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       </section>
       
       <Card className="overflow-hidden shadow-xl mt-4 sm:mt-6">
-        <CardContent className="p-3 sm:p-4 text-xl leading-relaxed">
+        <CardContent className="p-3 sm:p-4 text-lg leading-relaxed">
           <p>{game.description}</p>
         </CardContent>
       </Card>
