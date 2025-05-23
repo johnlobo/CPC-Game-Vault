@@ -11,9 +11,11 @@ export function Header() {
   // Show "Back to Library" button only on individual game detail pages like /games/some-id
   const showBackToLibraryButton = pathname.startsWith('/games/') && pathname.split('/').length > 2;
   // Show "Back to Home" button only on the full game library page /games
-  const showBackToHomeButton = pathname === '/games';
+  const showBackToHomeButtonGamesPage = pathname === '/games';
   // Show "Admin" button only on the homepage /
   const showAdminButton = pathname === '/';
+  // Show "Back to Home" button only on the admin page /admin
+  const showBackToHomeButtonAdminPage = pathname === '/admin';
 
   return (
     <header className="py-2 sm:py-3 bg-card shadow-lg sticky top-0 z-50">
@@ -34,7 +36,7 @@ export function Header() {
           </Button>
         )}
 
-        {showBackToHomeButton && (
+        {showBackToHomeButtonGamesPage && (
            <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
             <Link href="/">
               <span className="inline-flex items-center">
@@ -51,6 +53,17 @@ export function Header() {
               <span className="inline-flex items-center">
                 <Settings className="mr-2 h-7 w-7" />
                 <span>Admin</span>
+              </span>
+            </Link>
+          </Button>
+        )}
+
+        {showBackToHomeButtonAdminPage && (
+           <Button variant="outline" asChild size="lg" className="text-xl py-3 px-6">
+            <Link href="/">
+              <span className="inline-flex items-center">
+                <ArrowLeft className="mr-2 h-7 w-7" />
+                <span>Back to Home</span>
               </span>
             </Link>
           </Button>

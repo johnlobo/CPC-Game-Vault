@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react'; // Removed ArrowLeft
 import type { Metadata } from 'next';
 import { getGames, type Game } from '@/data/games'; // Import game data and type
 import {
@@ -28,14 +28,7 @@ export default async function AdminPage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter text-center sm:text-left">
           Admin Area
         </h1>
-        <Button variant="outline" asChild size="lg" className="text-xl py-3 px-6">
-          <Link href="/">
-            <span className="inline-flex items-center">
-              <ArrowLeft className="mr-2 h-7 w-7" />
-              <span>Back to Home</span>
-            </span>
-          </Link>
-        </Button>
+        {/* "Back to Home" button removed from here, it's now in the Header component */}
       </div>
       
       <div className="bg-card p-4 sm:p-6 rounded-lg shadow-xl">
