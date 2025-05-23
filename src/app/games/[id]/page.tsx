@@ -65,19 +65,19 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
     <div className="space-y-4 sm:space-y-6">
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-lg">
-          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={16} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={16} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={16} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={16} className="mr-1" /> {game.publisher}</Badge>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
+          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={20} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={20} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={20} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={20} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
       <div className="mt-3 sm:mt-4">
-        <Button variant="outline" asChild size="lg" className="text-lg">
+        <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
           <Link href="/">
             <span className="inline-flex items-center">
-              <ArrowLeft className="mr-1.5 h-5 w-5" />
+              <ArrowLeft className="mr-2 h-7 w-7" />
               <span>Back to Library</span>
             </span>
           </Link>
@@ -88,7 +88,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12">
         <h2 className="text-2xl sm:text-3xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={26} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
+          <Eye size={30} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
         </h2>
         <Emulator 
           key={`${game.diskUrl}-${game.emulatorCommand}`} 
@@ -101,7 +101,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       <Separator className="my-3 sm:my-4" />
       
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4 text-lg leading-relaxed">
+        <CardContent className="p-3 sm:p-4 text-xl leading-relaxed">
           <p>{game.description}</p>
         </CardContent>
       </Card>

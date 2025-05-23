@@ -31,7 +31,7 @@ export default async function HomePage() {
       )}
        {allGames.length > gamesToDisplay.length && ( 
         <div className="text-center mt-6 sm:mt-8">
-          <Button asChild size="lg" className="text-lg sm:text-xl py-3 px-6">
+          <Button asChild variant="default" size="lg" className="text-xl py-3 px-6">
             <Link href="/games">
               <span className="inline-flex items-center">
                 <Library className="mr-2 h-7 w-7" />
