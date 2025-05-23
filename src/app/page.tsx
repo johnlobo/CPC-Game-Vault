@@ -7,7 +7,7 @@ import { Library } from 'lucide-react';
 
 export default async function HomePage() {
   const allGames = await getGames();
-  const gamesToDisplay = allGames.slice(0, 3); // Show only the first 3 games
+  const gamesToDisplay = allGames.slice(0, 3); 
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -15,7 +15,7 @@ export default async function HomePage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-2.5 text-primary tracking-tight">
           Welcome to the CPC Game Vault!
         </h1>
-        <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto px-4">
+        <p className="text-2xl text-muted-foreground max-w-2xl mx-auto px-4">
           Browse, discover, and play classic Amstrad CPC games directly in your browser.
         </p>
       </section>
@@ -27,14 +27,14 @@ export default async function HomePage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground py-10 text-xl sm:text-2xl">No games available at the moment. Check back soon!</p>
+        <p className="text-center text-muted-foreground py-10 text-2xl sm:text-3xl">No games available at the moment. Check back soon!</p>
       )}
        {allGames.length > gamesToDisplay.length && ( 
         <div className="text-center mt-6 sm:mt-8">
           <Button asChild variant="default" size="lg" className="text-xl py-3 px-6">
             <Link href="/games">
               <span className="inline-flex items-center">
-                <Library className="mr-2 h-7 w-7" />
+                <Library className="mr-2 h-8 w-8" />
                 <span>Explore Full Library ({allGames.length - gamesToDisplay.length} more)</span>
               </span>
             </Link>

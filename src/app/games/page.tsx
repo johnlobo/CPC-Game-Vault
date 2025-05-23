@@ -1,3 +1,4 @@
+
 import { getGames } from '@/data/games';
 import { GameCard } from '@/app/components/GameCard';
 import type { Metadata } from 'next';
@@ -19,16 +20,16 @@ export default async function AllGamesPage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter text-center sm:text-left">
           Full Game Library
         </h1>
-        <Button variant="outline" asChild size="lg" className="w-full sm:w-auto text-lg sm:text-xl py-3 px-5">
+        <Button variant="outline" asChild size="lg" className="w-full sm:w-auto text-xl sm:text-2xl py-3 px-5">
           <Link href="/">
             <span className="inline-flex items-center justify-center">
-              <ArrowLeft className="mr-1.5 h-7 w-7" />
+              <ArrowLeft className="mr-1.5 h-8 w-8" />
               <span>Back to Home</span>
             </span>
           </Link>
         </Button>
       </div>
-       <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto px-4 text-center pt-2.5">
+       <p className="text-2xl sm:text-3xl text-muted-foreground max-w-3xl mx-auto px-4 text-center pt-2.5">
           Explore the complete collection of classic Amstrad CPC games available in the vault. Click on any game to learn more and play!
         </p>
       
@@ -39,7 +40,7 @@ export default async function AllGamesPage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground py-10 text-xl sm:text-2xl">
+        <p className="text-center text-muted-foreground py-10 text-2xl sm:text-3xl">
           No games available at the moment. Check back soon!
         </p>
       )}

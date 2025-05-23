@@ -17,12 +17,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface GamePageProps {
-  params: { id: string }; // Keeping the prop type as is, will cast for `use`
+  params: { id: string };
 }
 
 export default function GamePage({ params: paramsFromProps }: GamePageProps) {
-  // Unwrap the params promise using React.use()
-  // The warning states "params is now a Promise". So paramsFromProps should be treated as such.
   const resolvedParams = use(paramsFromProps as Promise<{ id: string }>);
   const id = resolvedParams.id;
 
@@ -32,8 +30,8 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   useEffect(() => {
     async function fetchGame() {
-      setGame(undefined); // Explicitly set to loading state before fetch to clear previous game data
-      const gameData = await getGameById(id); // Use the unwrapped id
+      setGame(undefined); 
+      const gameData = await getGameById(id); 
       setGame(gameData);
       if (gameData) {
         document.title = `${gameData.title} | CPC Game Vault`;
@@ -41,19 +39,17 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         document.title = 'Game Not Found | CPC Game Vault';
       }
     }
-    // Ensure id is available before fetching.
-    // React.use suspends if the promise isn't resolved, so 'id' will be available here.
     if (id) {
         fetchGame();
     }
-  }, [id]); // Depend on the unwrapped id
+  }, [id]); 
 
   if (game === undefined) {
     return null;
   }
 
   if (!game) {
-    notFound(); // This will trigger the not-found.tsx boundary
+    notFound(); 
   }
 
   const handleScreenshotClick = (screenshotUrl: string) => {
@@ -64,12 +60,12 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
   return (
     <div className="space-y-4 sm:space-y-6">
       <header className="text-center space-y-1 pt-1 sm:pt-2">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
-          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={20} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={20} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={20} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={20} className="mr-1" /> {game.publisher}</Badge>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-2xl">
+          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={24} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={24} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={24} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={24} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
@@ -77,7 +73,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
           <Link href="/">
             <span className="inline-flex items-center">
-              <ArrowLeft className="mr-2 h-7 w-7" />
+              <ArrowLeft className="mr-2 h-8 w-8" />
               <span>Back to Library</span>
             </span>
           </Link>
@@ -87,8 +83,8 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       <Separator className="my-3 sm:my-4" />
       
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={30} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
+        <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
+          <Eye size={36} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
         </h2>
         <Emulator 
           key={`${game.diskUrl}-${game.emulatorCommand}`} 
@@ -101,7 +97,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       <Separator className="my-3 sm:my-4" />
       
       <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4 text-xl leading-relaxed">
+        <CardContent className="p-3 sm:p-4 text-2xl leading-relaxed">
           <p>{game.description}</p>
         </CardContent>
       </Card>
@@ -110,7 +106,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         <>
           <Separator className="my-3 sm:my-4" />
           <section id="screenshots" className="scroll-mt-10 sm:scroll-mt-12">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2.5 sm:mb-3.5 text-center text-primary tracking-tight">Screenshots</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3.5 text-center text-primary tracking-tight">Screenshots</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {game.screenshots.map((screenshot, index) => (
                 <Dialog key={index} open={isDialogOpen && selectedScreenshot === screenshot} onOpenChange={(open) => { if (!open) setSelectedScreenshot(null); setIsDialogOpen(open);}}>
@@ -130,12 +126,12 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
                         loading="lazy"
                       />
                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <Eye size={32} className="text-white/80" />
+                        <Eye size={40} className="text-white/80" />
                       </div>
                     </button>
                   </DialogTrigger>
                   <DialogContent className="max-w-3xl p-2 sm:p-3">
-                    {selectedScreenshot === screenshot && ( // Ensure correct image is loaded
+                    {selectedScreenshot === screenshot && ( 
                       <div className="aspect-[4/3] relative">
                         <Image
                           src={selectedScreenshot}
