@@ -72,10 +72,25 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
     return () => {
       // Cleanup when component unmounts or diskUrl/command changes (due to key prop)
       if (currentContainer) {
+        // Attempt to find and remove any canvas elements created by the player
+        // This can be more robust for some libraries than just innerHTML = ''
+        const canvasElements = currentContainer.getElementsByTagName('canvas');
+        while (canvasElements.length > 0) {
+          canvasElements[0].parentNode?.removeChild(canvasElements[0]);
+        }
+        // Clear any remaining content
         currentContainer.innerHTML = '';
+        
+        // Ensure focus is removed if it was within the container
+        if (document.activeElement && currentContainer.contains(document.activeElement)) {
+            (document.activeElement as HTMLElement).blur();
+        }
+        // console.log(`Emulator: Cleaned up container for ${title}`); // For debugging
+      } else {
+        // console.log(`Emulator cleanup: containerRef.current is null for ${title}`); // For debugging
       }
     };
-  }, [diskUrl, command]); // Add command to dependency array
+  }, [diskUrl, command, title]); // Add command and title to dependency array
 
   const handleContainerClick = () => {
     if (containerRef.current) {
