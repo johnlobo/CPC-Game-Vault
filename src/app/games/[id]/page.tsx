@@ -60,6 +60,17 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      <div className="flex justify-end mt-2 sm:mt-3 mb-2 sm:mb-0">
+        <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
+          <Link href="/">
+            <span className="inline-flex items-center">
+              <ArrowLeft className="mr-2 h-7 w-7" />
+              <span>Back to Library</span>
+            </span>
+          </Link>
+        </Button>
+      </div>
+
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
         <div className="flex flex-wrap justify-center items-center gap-1.5 text-lg">
@@ -76,9 +87,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       </header>
 
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12 pt-3 sm:pt-4">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={42} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
-        </h2>
+        {/* Removed "Play Now!" heading */}
         <Emulator
           key={`${game.id}-${game.diskUrl}-${game.emulatorCommand}`}
           diskUrl={game.diskUrl}
