@@ -14,32 +14,32 @@ export default async function AllGamesPage() {
   const allGames = await getGames();
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center pt-1 sm:pt-2 gap-2">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center pt-2 sm:pt-3 gap-3">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter text-center sm:text-left">
           Full Game Library
         </h1>
-        <Button variant="outline" asChild size="lg" className="w-full sm:w-auto">
+        <Button variant="outline" asChild size="lg" className="w-full sm:w-auto text-lg sm:text-xl py-3 px-5">
           <Link href="/">
             <span className="inline-flex items-center justify-center">
-              <ArrowLeft className="mr-1.5 h-6 w-6" />
+              <ArrowLeft className="mr-1.5 h-7 w-7" />
               <span>Back to Home</span>
             </span>
           </Link>
         </Button>
       </div>
-       <p className="text-xl text-muted-foreground max-w-2xl mx-auto px-4 text-center pt-2">
-          Explore the complete collection of classic Amstrad CPC games available in the vault.
+       <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto px-4 text-center pt-2.5">
+          Explore the complete collection of classic Amstrad CPC games available in the vault. Click on any game to learn more and play!
         </p>
       
       {allGames.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 pt-4">
           {allGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground py-8 text-xl">
+        <p className="text-center text-muted-foreground py-10 text-xl sm:text-2xl">
           No games available at the moment. Check back soon!
         </p>
       )}
