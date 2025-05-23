@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Gamepad2, ArrowLeft } from 'lucide-react';
+import { Gamepad2, ArrowLeft, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
@@ -12,6 +12,8 @@ export function Header() {
   const showBackToLibraryButton = pathname.startsWith('/games/') && pathname.split('/').length > 2;
   // Show "Back to Home" button only on the full game library page /games
   const showBackToHomeButton = pathname === '/games';
+  // Show "Admin" button only on the homepage /
+  const showAdminButton = pathname === '/';
 
   return (
     <header className="py-2 sm:py-3 bg-card shadow-lg sticky top-0 z-50">
@@ -42,13 +44,18 @@ export function Header() {
             </Link>
           </Button>
         )}
+
+        {showAdminButton && (
+           <Button variant="outline" asChild size="lg" className="text-xl py-3 px-6">
+            <Link href="/admin">
+              <span className="inline-flex items-center">
+                <Settings className="mr-2 h-7 w-7" />
+                <span>Admin</span>
+              </span>
+            </Link>
+          </Button>
+        )}
         
-        {/* Navigation links can be added here if needed */}
-        {/* <nav>
-          <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-            About
-          </Link>
-        </nav> */}
       </div>
     </header>
   );
