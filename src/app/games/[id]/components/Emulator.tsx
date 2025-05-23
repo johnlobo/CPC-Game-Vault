@@ -30,9 +30,11 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const currentContainer = containerRef.current; 
+    // Capture the DOM element at the time the effect runs.
+    // This specific element will be used for both setup and cleanup.
+    const activeContainerElement = containerRef.current; 
 
-    if (!currentContainer) {
+    if (!activeContainerElement) {
       setErrorMessage("Error: Emulator container element not found.");
       setPlayerStatus('error');
       console.error("[EMULATOR INIT] Container ref not found for", title);
@@ -41,10 +43,10 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
 
     // Clear previous emulator instance or messages before loading new one
     console.log(`[EMULATOR INIT] Clearing container for ${title}`);
-    while (currentContainer.firstChild) {
-      currentContainer.removeChild(currentContainer.firstChild);
+    while (activeContainerElement.firstChild) {
+      activeContainerElement.removeChild(activeContainerElement.firstChild);
     }
-    currentContainer.innerHTML = ''; // Ensure it's empty
+    activeContainerElement.innerHTML = ''; // Ensure it's empty
 
     setPlayerStatus('loading');
     setErrorMessage(null);
@@ -52,7 +54,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
 
     if (typeof window.rvmPlayer_cpc6128 === 'function') {
       try {
-        window.rvmPlayer_cpc6128(currentContainer, {
+        window.rvmPlayer_cpc6128(activeContainerElement, {
           disk: {
             type: 'dsk',
             url: diskUrl,
@@ -63,7 +65,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
         });
         setPlayerStatus('success');
         console.log(`[EMULATOR INIT] Successfully initialized RVM Player for ${title}`);
-        currentContainer.focus(); 
+        activeContainerElement.focus(); 
       } catch (error) {
         console.error(`[EMULATOR INIT] Error initializing RVM Player for ${title}:`, error);
         const msg = error instanceof Error ? error.message : "An unknown error occurred during initialization.";
@@ -77,32 +79,32 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
     }
 
     return () => {
-      // This is the cleanup function
-      const containerForCleanup = containerRef.current; // Re-fetch ref at cleanup time, though usually the captured one is fine
+      // This is the cleanup function. It uses 'activeContainerElement' captured from the effect's closure.
       console.log(`[EMULATOR CLEANUP] Starting cleanup for: ${title}`);
 
-      if (containerForCleanup) {
-        console.log(`[EMULATOR CLEANUP] Container found for ${title}. Proceeding with DOM cleanup.`);
+      if (activeContainerElement) {
+        console.log(`[EMULATOR CLEANUP] Container (captured at init) found for ${title}. Proceeding with DOM cleanup.`);
         
-        // Remove all child nodes one by one.
-        // This is more deliberate than innerHTML = '' and can help if the library
-        // has attached event listeners to children.
-        while (containerForCleanup.firstChild) {
-          containerForCleanup.removeChild(containerForCleanup.firstChild);
-        }
-        // As a fallback, ensure it's empty.
-        containerForCleanup.innerHTML = ''; 
-
-        if (document.activeElement && containerForCleanup.contains(document.activeElement)) {
-          console.log(`[EMULATOR CLEANUP] Blurring active element within container for ${title}.`);
+        // Try to blur any active element within the container first
+        if (document.activeElement && activeContainerElement.contains(document.activeElement)) {
+          console.log(`[EMULATOR CLEANUP] Blurring active element within captured container for ${title}.`);
           (document.activeElement as HTMLElement).blur();
         }
-        console.log(`[EMULATOR CLEANUP] Finished cleanup for: ${title}. Player status was: ${playerStatus}`);
+
+        // Remove all child nodes one by one.
+        while (activeContainerElement.firstChild) {
+          activeContainerElement.removeChild(activeContainerElement.firstChild);
+        }
+        // As a fallback, ensure it's empty.
+        activeContainerElement.innerHTML = ''; 
+
+        console.log(`[EMULATOR CLEANUP] Finished cleanup for: ${title}. Player status (at time of effect setup) was: ${playerStatus}`);
       } else {
-        console.warn(`[EMULATOR CLEANUP] Container ref was null for ${title} during cleanup.`);
+        // This should ideally not happen if activeContainerElement was valid during setup.
+        console.warn(`[EMULATOR CLEANUP] Captured container element was null for ${title} during cleanup. This is unexpected if init succeeded.`);
       }
     };
-  }, [diskUrl, command, title]); // Effect dependencies
+  }, [diskUrl, command, title, playerStatus]); // Added playerStatus to dependencies to re-evaluate cleanup log if status changes, though primary effect is keyed by diskUrl/command.
 
   const handleContainerClick = () => {
     if (containerRef.current) {
