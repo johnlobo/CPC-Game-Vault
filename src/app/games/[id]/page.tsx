@@ -58,16 +58,6 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <header className="text-center space-y-1 pt-1 sm:pt-2">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={28} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={28} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={28} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={28} className="mr-1" /> {game.publisher}</Badge>
-        </div>
-      </header>
-
       <div className="mt-3 sm:mt-4 flex justify-end">
         <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
           <Link href="/">
@@ -78,6 +68,16 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
           </Link>
         </Button>
       </div>
+
+      <header className="text-center space-y-1 pt-1 sm:pt-2">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={28} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={28} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={28} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={28} className="mr-1" /> {game.publisher}</Badge>
+        </div>
+      </header>
       
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12 pt-3 sm:pt-4">
         <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
