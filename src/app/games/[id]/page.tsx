@@ -87,7 +87,7 @@ export default async function GamePage({ params }: GamePageProps) {
             <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3.5 text-center text-primary tracking-tight">Screenshots</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {game.screenshots.map((screenshot, index) => (
-                <div key={index} className="aspect-video relative rounded-lg overflow-hidden shadow-lg border border-border group transition-all duration-300 hover:scale-105 hover:shadow-primary/30">
+                <div key={index} className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-lg border border-border group transition-all duration-300 hover:scale-105 hover:shadow-primary/30">
                   <Image
                     src={screenshot}
                     alt={`${game.title} screenshot ${index + 1}`}

@@ -23,9 +23,9 @@ export const games: Game[] = [
     description: "Amsthrees is the free adaptation of the mobile platforms game Threes.The main goal of the game is to slide cards in a grid to combine them to create the highest multiple of three possible.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-      "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png",
-      "https://placehold.co/600x400.png",
-      "https://placehold.co/600x400.png",
+      "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png", // This is a real image URL, aspect ratio will be handled by object-cover
+      "https://placehold.co/400x300.png",
+      "https://placehold.co/400x300.png",
     ],
     rvmGameId: "00080",
     diskUrl: "/gamez/Ams3s.dsk",
@@ -41,8 +41,8 @@ export const games: Game[] = [
     description: "Based on the 1989 film, Batman: The Movie features several levels mirroring scenes from the film, including platforming, driving, and puzzle-solving elements. The CPC version was highly acclaimed.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-      "https://placehold.co/600x400.png",
-      "https://placehold.co/600x400.png",
+      "https://placehold.co/400x300.png",
+      "https://placehold.co/400x300.png",
     ],
     rvmGameId: "00053",
     diskUrl: "/gamez/batman-the-movie.dsk",
@@ -58,12 +58,12 @@ export const games: Game[] = [
     description: "Arkanoid is an arcade game developed by Taito in 1986. It is a block breaker game where the player controls a paddle-like craft known as the Vaus at the bottom of the screen, and must deflect a ball towards a number of bricks at the top of the screen to destroy them.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-        "https://placehold.co/600x400.png",
-        "https://placehold.co/600x400.png",
+        "https://placehold.co/400x300.png",
+        "https://placehold.co/400x300.png",
     ],
     rvmGameId: "00031",
     diskUrl: "/gamez/arkanoid.dsk",
-    emulatorCommand: 'run"arkanoid\n', // Example: might be different
+    emulatorCommand: 'run"arkanoid\n', 
     genre: "Breakout clone",
     year: 1986,
     developer: "Taito",
@@ -75,12 +75,12 @@ export const games: Game[] = [
     description: "Gryzor, known as Contra in some regions, is a run-and-gun action game. Players battle aliens and enemy soldiers through various levels, collecting power-ups to upgrade their weaponry.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-      "https://placehold.co/600x400.png",
-      "https://placehold.co/600x400.png",
+      "https://placehold.co/400x300.png",
+      "https://placehold.co/400x300.png",
     ],
     rvmGameId: "00292",
     diskUrl: "/gamez/gryzor.dsk",
-    emulatorCommand: 'run"gryzor\n', // Example: might be different
+    emulatorCommand: 'run"gryzor\n', 
     genre: "Run and gun",
     year: 1987,
     developer: "Konami",
@@ -92,12 +92,12 @@ export const games: Game[] = [
     description: "Sorcery+ is an action-adventure game where the player controls a sorcerer on a quest to rescue fellow sorcerers. It features exploration, puzzle-solving, and combat with magical spells.",
     coverImage: "https://placehold.co/300x400.png",
     screenshots: [
-      "https://placehold.co/600x400.png",
-      "https://placehold.co/600x400.png",
+      "https://placehold.co/400x300.png",
+      "https://placehold.co/400x300.png",
     ],
     rvmGameId: "00556",
     diskUrl: "/gamez/sorcery.dsk",
-    emulatorCommand: 'run"sorcery\n', // Example: might be different
+    emulatorCommand: 'run"sorcery\n', 
     genre: "Action-adventure",
     year: 1985,
     developer: "Virgin Games",

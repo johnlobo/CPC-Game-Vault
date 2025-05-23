@@ -1,3 +1,4 @@
+
 import { getGames } from '@/data/games';
 import { GameCard } from '@/app/components/GameCard';
 import Link from 'next/link';
@@ -6,7 +7,7 @@ import { Library } from 'lucide-react';
 
 export default async function HomePage() {
   const allGames = await getGames();
-  const gamesToDisplay = allGames.slice(0, 4); // Still fetches 4 to decide if "Explore more" button is needed
+  const gamesToDisplay = allGames.slice(0, 3); // Show only the first 3 games
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -28,7 +29,7 @@ export default async function HomePage() {
       ) : (
         <p className="text-center text-muted-foreground py-10 text-xl sm:text-2xl">No games available at the moment. Check back soon!</p>
       )}
-       {allGames.length > gamesToDisplay.length && ( // Display button if there are more games than shown (currently 4)
+       {allGames.length > gamesToDisplay.length && ( 
         <div className="text-center mt-6 sm:mt-8">
           <Button asChild size="lg" className="text-lg sm:text-xl py-3 px-6">
             <Link href="/games">
