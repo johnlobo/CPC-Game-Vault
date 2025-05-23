@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Code2, Tag, Users, Eye, ArrowLeft, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface GamePageProps {
   params: { id: string };
@@ -30,7 +30,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   useEffect(() => {
     async function fetchGame() {
-      setGame(undefined);
+      setGame(undefined); // Explicitly set to loading state before fetch to clear previous game data
       const gameData = await getGameById(id);
       setGame(gameData);
       if (gameData) {
@@ -60,11 +60,11 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Removed duplicate "Back to Library" button from here */}
+      {/* "Back to Library" button is now in Header.tsx */}
 
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-lg">
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
           <Badge variant="secondary" className="px-2 py-1 text-xl"><CalendarDays size={28} className="mr-1.5" /> {game.year}</Badge>
           <Badge variant="secondary" className="px-2 py-1 text-xl"><Tag size={28} className="mr-1.5" /> {game.genre}</Badge>
           <Badge variant="secondary" className="px-2 py-1 text-xl"><Code2 size={28} className="mr-1.5" /> {game.developer}</Badge>
@@ -121,6 +121,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
                     </button>
                   </DialogTrigger>
                   <DialogContent className="max-w-3xl p-2 sm:p-3">
+                    <DialogTitle className="sr-only">{`Enlarged screenshot of ${game.title}`}</DialogTitle>
                     {selectedScreenshot === screenshot && (
                       <div className="aspect-[4/3] relative">
                         <Image
