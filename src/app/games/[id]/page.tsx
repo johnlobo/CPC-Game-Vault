@@ -1,9 +1,9 @@
 
 "use client"; // Required for useState and event handlers
 
+import { useEffect, useState, use } from 'react'; // Added 'use'
 import type { Game } from '@/data/games';
 import { getGameById } from '@/data/games';
-// import type { Metadata } from 'next'; // Metadata generation is complex for client components
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -15,32 +15,25 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useEffect, useState } from 'react';
 
 interface GamePageProps {
-  params: { id: string };
+  params: { id: string }; // Keeping the prop type as is, will cast for `use`
 }
 
-// export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
-//   const game = await getGameById(params.id);
-//   if (!game) {
-//     return { title: 'Game Not Found' };
-//   }
-//   return {
-//     title: game.title,
-//     description: `Play ${game.title} online! Details, screenshots, and emulator for this Amstrad CPC classic. ${game.description.substring(0, 120)}...`,
-//   };
-// }
+export default function GamePage({ params: paramsFromProps }: GamePageProps) {
+  // Unwrap the params promise using React.use()
+  // The warning states "params is now a Promise". So paramsFromProps should be treated as such.
+  const resolvedParams = use(paramsFromProps as Promise<{ id: string }>);
+  const id = resolvedParams.id;
 
-export default function GamePage({ params }: GamePageProps) {
-  const [game, setGame] = useState<Game | null | undefined>(undefined); // undefined for loading, null for not found
+  const [game, setGame] = useState<Game | null | undefined>(undefined);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     async function fetchGame() {
       setGame(undefined); // Explicitly set to loading state before fetch to clear previous game data
-      const gameData = await getGameById(params.id);
+      const gameData = await getGameById(id); // Use the unwrapped id
       setGame(gameData);
       if (gameData) {
         document.title = `${gameData.title} | CPC Game Vault`;
@@ -48,11 +41,13 @@ export default function GamePage({ params }: GamePageProps) {
         document.title = 'Game Not Found | CPC Game Vault';
       }
     }
-    fetchGame();
-  }, [params.id]);
+    // Ensure id is available before fetching.
+    // React.use suspends if the promise isn't resolved, so 'id' will be available here.
+    if (id) {
+        fetchGame();
+    }
+  }, [id]); // Depend on the unwrapped id
 
-  // If game data is still loading, render nothing.
-  // The GameCard loader provides initial feedback & browser's own loading state will indicate activity.
   if (game === undefined) {
     return null;
   }
