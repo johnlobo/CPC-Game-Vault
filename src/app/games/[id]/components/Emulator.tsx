@@ -35,12 +35,20 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
     if (!currentContainer) {
       setErrorMessage("Error: Emulator container element not found.");
       setPlayerStatus('error');
+      console.error("[EMULATOR INIT] Container ref not found for", title);
       return;
     }
 
-    currentContainer.innerHTML = ''; // Clear previous emulator instance or messages
+    // Clear previous emulator instance or messages before loading new one
+    console.log(`[EMULATOR INIT] Clearing container for ${title}`);
+    while (currentContainer.firstChild) {
+      currentContainer.removeChild(currentContainer.firstChild);
+    }
+    currentContainer.innerHTML = ''; // Ensure it's empty
+
     setPlayerStatus('loading');
     setErrorMessage(null);
+    console.log(`[EMULATOR INIT] Loading emulator for ${title} with command: ${command}`);
 
     if (typeof window.rvmPlayer_cpc6128 === 'function') {
       try {
@@ -49,48 +57,52 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
             type: 'dsk',
             url: diskUrl,
           },
-          command: command, // Use the passed command
+          command: command,
           warpFrames: 20 * 50,
           waitAudio: true,
         });
         setPlayerStatus('success');
-        // Attempt to focus the container after successful initialization.
-        // The user might still need to click the canvas due to waitAudio: true.
+        console.log(`[EMULATOR INIT] Successfully initialized RVM Player for ${title}`);
         currentContainer.focus(); 
       } catch (error) {
-        console.error("Error initializing RVM Player:", error);
+        console.error(`[EMULATOR INIT] Error initializing RVM Player for ${title}:`, error);
         const msg = error instanceof Error ? error.message : "An unknown error occurred during initialization.";
         setErrorMessage(`Error loading emulator: ${msg}`);
         setPlayerStatus('error');
       }
     } else {
-      console.warn("RVM Player script (rvmPlayer_cpc6128) not found. Ensure it's loaded correctly via the <Script> tag in layout.tsx.");
+      console.warn(`[EMULATOR INIT] RVM Player script (rvmPlayer_cpc6128) not found for ${title}. Ensure it's loaded correctly.`);
       setErrorMessage("Emulator script not loaded. Please try refreshing. If the problem persists, the script might be blocked or unavailable.");
       setPlayerStatus('error');
     }
 
     return () => {
-      // Cleanup when component unmounts or diskUrl/command changes (due to key prop)
-      if (currentContainer) {
-        // Attempt to find and remove any canvas elements created by the player
-        // This can be more robust for some libraries than just innerHTML = ''
-        const canvasElements = currentContainer.getElementsByTagName('canvas');
-        while (canvasElements.length > 0) {
-          canvasElements[0].parentNode?.removeChild(canvasElements[0]);
-        }
-        // Clear any remaining content
-        currentContainer.innerHTML = '';
+      // This is the cleanup function
+      const containerForCleanup = containerRef.current; // Re-fetch ref at cleanup time, though usually the captured one is fine
+      console.log(`[EMULATOR CLEANUP] Starting cleanup for: ${title}`);
+
+      if (containerForCleanup) {
+        console.log(`[EMULATOR CLEANUP] Container found for ${title}. Proceeding with DOM cleanup.`);
         
-        // Ensure focus is removed if it was within the container
-        if (document.activeElement && currentContainer.contains(document.activeElement)) {
-            (document.activeElement as HTMLElement).blur();
+        // Remove all child nodes one by one.
+        // This is more deliberate than innerHTML = '' and can help if the library
+        // has attached event listeners to children.
+        while (containerForCleanup.firstChild) {
+          containerForCleanup.removeChild(containerForCleanup.firstChild);
         }
-        // console.log(`Emulator: Cleaned up container for ${title}`); // For debugging
+        // As a fallback, ensure it's empty.
+        containerForCleanup.innerHTML = ''; 
+
+        if (document.activeElement && containerForCleanup.contains(document.activeElement)) {
+          console.log(`[EMULATOR CLEANUP] Blurring active element within container for ${title}.`);
+          (document.activeElement as HTMLElement).blur();
+        }
+        console.log(`[EMULATOR CLEANUP] Finished cleanup for: ${title}. Player status was: ${playerStatus}`);
       } else {
-        // console.log(`Emulator cleanup: containerRef.current is null for ${title}`); // For debugging
+        console.warn(`[EMULATOR CLEANUP] Container ref was null for ${title} during cleanup.`);
       }
     };
-  }, [diskUrl, command, title]); // Add command and title to dependency array
+  }, [diskUrl, command, title]); // Effect dependencies
 
   const handleContainerClick = () => {
     if (containerRef.current) {
@@ -106,16 +118,17 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
   return (
     <div
       ref={containerRef}
-      tabIndex={0} // Make the container focusable
-      onClick={handleContainerClick} // Handle clicks to attempt focus
-      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden outline-none" // Added outline-none for focused state
+      tabIndex={0} 
+      onClick={handleContainerClick} 
+      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden outline-none" 
       style={{ 
         position: 'relative', 
         width: '800px', 
         height: '600px', 
         border: '2px solid hsl(var(--primary))', 
       }}
-      title={`${title} - Amstrad CPC Emulator. Click to activate and control.`} // Added hint in title
+      title={`${title} - Amstrad CPC Emulator. Click to activate and control.`} 
+      aria-label={`Amstrad CPC Emulator for ${title}`}
     >
       {playerStatus === 'loading' && (
         <div className="flex items-center justify-center h-full text-center p-4">
@@ -128,8 +141,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
         </div>
       )}
       {/* When playerStatus is 'success', React renders nothing here, 
-          allowing RVM player to control the container's DOM. 
-          The title attribute now suggests clicking to activate. */}
+          allowing RVM player to control the container's DOM. */}
     </div>
   );
 }
