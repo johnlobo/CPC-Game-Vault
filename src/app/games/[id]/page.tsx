@@ -10,7 +10,7 @@ import { notFound } from 'next/navigation';
 import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye, Loader2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ export default function GamePage({ params }: GamePageProps) {
 
   useEffect(() => {
     async function fetchGame() {
-      setGame(undefined); // Explicitly set to loading state before fetch
+      setGame(undefined); // Explicitly set to loading state before fetch to clear previous game data
       const gameData = await getGameById(params.id);
       setGame(gameData);
       if (gameData) {
@@ -51,14 +51,10 @@ export default function GamePage({ params }: GamePageProps) {
     fetchGame();
   }, [params.id]);
 
+  // If game data is still loading, render nothing.
+  // The GameCard loader provides initial feedback & browser's own loading state will indicate activity.
   if (game === undefined) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <Loader2 className="h-16 w-16 animate-spin text-primary mb-4" />
-        <p className="text-2xl text-muted-foreground">Loading game details...</p>
-        <p className="text-lg text-muted-foreground/80">Please wait a moment.</p>
-      </div>
-    );
+    return null;
   }
 
   if (!game) {
@@ -74,19 +70,19 @@ export default function GamePage({ params }: GamePageProps) {
     <div className="space-y-4 sm:space-y-6">
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5">
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={18} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={18} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={18} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={18} className="mr-1" /> {game.publisher}</Badge>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-lg">
+          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={16} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={16} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={16} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={16} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
       <div className="mt-3 sm:mt-4">
-        <Button variant="outline" asChild size="lg">
+        <Button variant="outline" asChild size="lg" className="text-lg">
           <Link href="/">
             <span className="inline-flex items-center">
-              <ArrowLeft className="mr-1.5 h-6 w-6" />
+              <ArrowLeft className="mr-1.5 h-5 w-5" />
               <span>Back to Library</span>
             </span>
           </Link>
@@ -97,7 +93,7 @@ export default function GamePage({ params }: GamePageProps) {
       
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12">
         <h2 className="text-2xl sm:text-3xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={28} className="inline-block mr-1.5 mb-1 text-accent" /> Play Now!
+          <Eye size={26} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
         </h2>
         <Emulator 
           key={`${game.diskUrl}-${game.emulatorCommand}`} 
@@ -139,7 +135,7 @@ export default function GamePage({ params }: GamePageProps) {
                         loading="lazy"
                       />
                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <Eye size={36} className="text-white/80" />
+                        <Eye size={32} className="text-white/80" />
                       </div>
                     </button>
                   </DialogTrigger>
