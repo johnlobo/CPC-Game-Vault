@@ -11,7 +11,6 @@ import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -61,11 +60,11 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
     <div className="space-y-4 sm:space-y-6">
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
-        <div className="flex flex-wrap justify-center items-center gap-1.5 text-2xl">
-          <Badge variant="secondary" className="px-1.5 py-0.5"><CalendarDays size={24} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Tag size={24} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Code2 size={24} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5"><Users size={24} className="mr-1" /> {game.publisher}</Badge>
+        <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={26} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={26} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={26} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={26} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
@@ -80,11 +79,9 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         </Button>
       </div>
       
-      <Separator className="my-3 sm:my-4" />
-      
-      <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12">
+      <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12 pt-3 sm:pt-4">
         <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={36} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
+          <Eye size={38} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
         </h2>
         <Emulator 
           key={`${game.diskUrl}-${game.emulatorCommand}`} 
@@ -94,18 +91,15 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         />
       </section>
       
-      <Separator className="my-3 sm:my-4" />
-      
-      <Card className="overflow-hidden shadow-xl">
-        <CardContent className="p-3 sm:p-4 text-2xl leading-relaxed">
+      <Card className="overflow-hidden shadow-xl mt-4 sm:mt-6">
+        <CardContent className="p-3 sm:p-4 text-xl leading-relaxed">
           <p>{game.description}</p>
         </CardContent>
       </Card>
       
       {game.screenshots && game.screenshots.length > 0 && (
         <>
-          <Separator className="my-3 sm:my-4" />
-          <section id="screenshots" className="scroll-mt-10 sm:scroll-mt-12">
+          <section id="screenshots" className="scroll-mt-10 sm:scroll-mt-12 pt-4 sm:pt-6">
             <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3.5 text-center text-primary tracking-tight">Screenshots</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {game.screenshots.map((screenshot, index) => (
@@ -126,7 +120,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
                         loading="lazy"
                       />
                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <Eye size={40} className="text-white/80" />
+                        <Eye size={42} className="text-white/80" />
                       </div>
                     </button>
                   </DialogTrigger>
@@ -149,9 +143,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
         </>
       )}
 
-      <Separator className="my-3 sm:my-4" />
-
-      <section id="related-games" className="scroll-mt-10 sm:scroll-mt-12">
+      <section id="related-games" className="scroll-mt-10 sm:scroll-mt-12 pt-4 sm:pt-6">
         <RelatedGames gameTitle={game.title} />
       </section>
     </div>
