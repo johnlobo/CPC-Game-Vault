@@ -1,12 +1,14 @@
 
 "use client";
 
+import type { Game } from '@/data/games';
 import { useEffect, useRef, useState } from 'react';
 
 interface EmulatorProps {
   diskUrl: string; // URL to the .dsk file
   command: string; // Command to run the game
   title: string;
+  status: Game['status']; // Add status prop
 }
 
 // TypeScript declaration for the RVM Player global function
@@ -24,7 +26,7 @@ declare global {
   }
 }
 
-export function Emulator({ diskUrl, command, title }: EmulatorProps) {
+export function Emulator({ diskUrl, command, title, status }: EmulatorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [playerStatus, setPlayerStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
   useEffect(() => {
     // Capture the DOM element at the time the effect runs.
     // This specific element will be used for both setup and cleanup.
-    const activeContainerElement = containerRef.current; 
+    const activeContainerElement = containerRef.current;
 
     if (!activeContainerElement) {
       setErrorMessage("Error: Emulator container element not found.");
@@ -65,7 +67,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
         });
         setPlayerStatus('success');
         console.log(`[EMULATOR INIT] Successfully initialized RVM Player for ${title}`);
-        activeContainerElement.focus(); 
+        activeContainerElement.focus();
       } catch (error) {
         console.error(`[EMULATOR INIT] Error initializing RVM Player for ${title}:`, error);
         const msg = error instanceof Error ? error.message : "An unknown error occurred during initialization.";
@@ -84,7 +86,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
 
       if (activeContainerElement) {
         console.log(`[EMULATOR CLEANUP] Container (captured at init) found for ${title}. Proceeding with DOM cleanup.`);
-        
+
         // Try to blur any active element within the container first
         if (document.activeElement && activeContainerElement.contains(document.activeElement)) {
           console.log(`[EMULATOR CLEANUP] Blurring active element within captured container for ${title}.`);
@@ -96,7 +98,7 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
           activeContainerElement.removeChild(activeContainerElement.firstChild);
         }
         // As a fallback, ensure it's empty.
-        activeContainerElement.innerHTML = ''; 
+        activeContainerElement.innerHTML = '';
 
         console.log(`[EMULATOR CLEANUP] Finished cleanup for: ${title}. Player status (at time of effect setup) was: ${playerStatus}`);
       } else {
@@ -117,32 +119,34 @@ export function Emulator({ diskUrl, command, title }: EmulatorProps) {
     }
   };
 
+  const borderColor = status === 'wip' ? 'hsl(var(--wip))' : 'hsl(var(--primary))';
+
   return (
     <div
       ref={containerRef}
-      tabIndex={0} 
-      onClick={handleContainerClick} 
-      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden outline-none" 
-      style={{ 
-        position: 'relative', 
-        width: '800px', 
-        height: '600px', 
-        border: '2px solid hsl(var(--primary))', 
+      tabIndex={0}
+      onClick={handleContainerClick}
+      className="rvm-player-container mx-auto bg-black rounded-lg shadow-xl overflow-hidden outline-none"
+      style={{
+        position: 'relative',
+        width: '800px',
+        height: '600px',
+        border: `2px solid ${borderColor}`,
       }}
-      title={`${title} - Amstrad CPC Emulator. Click to activate and control.`} 
+      title={`${title} - Amstrad CPC Emulator. Click to activate and control.`}
       aria-label={`Amstrad CPC Emulator for ${title}`}
     >
       {playerStatus === 'loading' && (
         <div className="flex items-center justify-center h-full text-center p-4">
-          <p className="text-muted-foreground">Loading emulator...</p>
+          <p className="text-muted-foreground text-xl">Loading emulator...</p>
         </div>
       )}
       {playerStatus === 'error' && errorMessage && (
         <div className="flex items-center justify-center h-full text-center p-4">
-          <p className="text-destructive">{errorMessage}</p>
+          <p className="text-destructive text-xl">{errorMessage}</p>
         </div>
       )}
-      {/* When playerStatus is 'success', React renders nothing here, 
+      {/* When playerStatus is 'success', React renders nothing here,
           allowing RVM player to control the container's DOM. */}
     </div>
   );
