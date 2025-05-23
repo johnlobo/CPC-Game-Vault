@@ -1,18 +1,18 @@
 
 "use client"; // Required for useState and event handlers
 
-import { useEffect, useState, use } from 'react'; // Added 'use'
+import { useEffect, useState, use } from 'react'; 
 import type { Game } from '@/data/games';
 import { getGameById } from '@/data/games';
 import Image from 'next/image';
-import Link from 'next/link';
+// Link and Button might not be needed anymore if only used for the removed button
+// ArrowLeft is definitely not needed
 import { notFound } from 'next/navigation';
 import { Emulator } from './components/Emulator';
 import { RelatedGames } from './components/RelatedGames';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
+import { CalendarDays, Code2, Tag, Users, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface GamePageProps {
@@ -20,6 +20,7 @@ interface GamePageProps {
 }
 
 export default function GamePage({ params: paramsFromProps }: GamePageProps) {
+  // Use React.use to unwrap the Promise for params
   const resolvedParams = use(paramsFromProps as Promise<{ id: string }>);
   const id = resolvedParams.id;
 
@@ -44,7 +45,8 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
   }, [id]); 
 
   if (game === undefined) {
-    return null;
+    // Return null or a minimal loader while params are resolving or game is fetching
+    return null; 
   }
 
   if (!game) {
@@ -58,16 +60,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="mt-3 sm:mt-4 flex justify-end">
-        <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
-          <Link href="/">
-            <span className="inline-flex items-center">
-              <ArrowLeft className="mr-2 h-8 w-8" />
-              <span>Back to Library</span>
-            </span>
-          </Link>
-        </Button>
-      </div>
+      {/* Removed Back to Library button from here */}
 
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
