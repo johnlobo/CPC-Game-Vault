@@ -35,6 +35,10 @@
     --ring: 130 80% 60%; /* Brighter primary green for ring */
     --radius: 0.3rem; /* Slightly sharper corners for retro feel */
 
+    /* WIP Colors */
+    --wip: 30 100% 55%; /* Bright Orange for WIP */
+    --wip-foreground: 220 15% 5%; /* Dark blue/black for text on orange */
+
     /* Chart colors - CPC inspired palette */
     --chart-1: 130 80% 50%; /* Green */
     --chart-2: 50 100% 55%; /* Yellow */

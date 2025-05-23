@@ -12,6 +12,7 @@ export interface Game {
   year: number;
   developer: string;
   publisher: string;
+  status: 'finished' | 'wip'; // New field for game status
 }
 
 // IMPORTANT: Ensure your .dsk files are placed in the `public/gamez/` directory.
@@ -21,7 +22,7 @@ export const games: Game[] = [
     id: "Amsthrees",
     title: "Amsthrees",
     description: "Amsthrees is the free adaptation of the mobile platforms game Threes.The main goal of the game is to slide cards in a grid to combine them to create the highest multiple of three possible.",
-    coverImage: "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5ODAucG5n/347x500/FQrbUt.png", // Updated from 300x400
+    coverImage: "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5ODAucG5n/347x500/FQrbUt.png", 
     screenshots: [
       "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png", 
       "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzkucG5n/347x500/qMQOAL.png",
@@ -34,12 +35,13 @@ export const games: Game[] = [
     year: 2015,
     developer: "John Lobo",
     publisher: "Glasnost Corp.",
+    status: 'finished',
   },
   {
     id: "dr-roland",
     title: "DrRoland",
     description: "The patient is suffering a terrible virus infection, and your role as Dr.Roland is to get rid of those ugly and funky viruses, throwing them colored vitamin capsules. ",
-    coverImage: "https://img.itch.zone/aW1hZ2UvODIxMTUxLzQ2MDI5NjgucG5n/347x500/moMECc.png", // Updated from 300x400
+    coverImage: "https://img.itch.zone/aW1hZ2UvODIxMTUxLzQ2MDI5NjgucG5n/347x500/moMECc.png", 
     screenshots: [
       "https://img.itch.zone/aW1hZ2UvODIxMTUxLzQ2MDI5NjYucG5n/347x500/44dNrA.png",
       "https://img.itch.zone/aW1hZ2UvODIxMTUxLzQ2MDI5NjYucG5n/347x500/44dNrA.png",
@@ -51,12 +53,13 @@ export const games: Game[] = [
     year: 2021,
     developer: "John Lobo",
     publisher: "Glasnost Corp.",
+    status: 'finished',
   },
   {
     id: "forms",
     title: "Forms",
     description: "Forms is a tetris-like game for your Amstrad CPC, in which you'll have to place as many forms as possible on a grid, to complete lines and colums and make them disappear.",
-    coverImage: "https://img.itch.zone/aW1hZ2UvMjM0Nzg3My8xMzkxNDIyNi5wbmc=/347x500/%2BxOlVv.png", // Updated from 300x400
+    coverImage: "https://img.itch.zone/aW1hZ2UvMjM0Nzg3My8xMzkxNDIyNi5wbmc=/347x500/%2BxOlVv.png", 
     screenshots: [
         "https://img.itch.zone/aW1hZ2UvMjM0Nzg3My8xMzkwODMwNS5wbmc=/347x500/SJy8FP.png",
         "https://img.itch.zone/aW1hZ2UvMjM0Nzg3My8xMzkxNDIzNS5wbmc=/347x500/xcLdsv.png",
@@ -69,12 +72,13 @@ export const games: Game[] = [
     year: 2023,
     developer: "John Lobo",
     publisher: "Glasnost Corp.",
+    status: 'finished',
   },
   {
     id: "gryzor",
     title: "Gryzor (Contra)",
     description: "Gryzor, known as Contra in some regions, is a run-and-gun action game. Players battle aliens and enemy soldiers through various levels, collecting power-ups to upgrade their weaponry.",
-    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
+    coverImage: "https://placehold.co/400x300.png", 
     screenshots: [
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
@@ -86,12 +90,13 @@ export const games: Game[] = [
     year: 1987,
     developer: "Konami",
     publisher: "Ocean Software",
+    status: 'wip',
   },
   {
     id: "sorcery",
     title: "Sorcery+",
     description: "Sorcery+ is an action-adventure game where the player controls a sorcerer on a quest to rescue fellow sorcerers. It features exploration, puzzle-solving, and combat with magical spells.",
-    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
+    coverImage: "https://placehold.co/400x300.png", 
     screenshots: [
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
@@ -103,6 +108,7 @@ export const games: Game[] = [
     year: 1985,
     developer: "Virgin Games",
     publisher: "Virgin Games",
+    status: 'wip',
   },
 ];
 
