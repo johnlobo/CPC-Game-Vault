@@ -4,7 +4,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Edit, Trash2, Settings, ArrowLeft } from 'lucide-react';
-import type { Metadata } from 'next';
+// No server-side metadata for client components
+// import type { Metadata } from 'next';
 import { getGames, type Game } from '@/data/games'; 
 import {
   Table,
@@ -93,6 +94,13 @@ export default function AdminPage() {
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingGame, setEditingGame] = useState<Game | null>(null);
+
+  const form = useForm<GameFormValues>({
+    resolver: zodResolver(gameFormSchema),
+    defaultValues,
+    mode: "onChange",
+  });
 
   useEffect(() => {
     async function fetchGames() {
@@ -104,25 +112,43 @@ export default function AdminPage() {
     fetchGames();
   }, []);
 
-  const form = useForm<GameFormValues>({
-    resolver: zodResolver(gameFormSchema),
-    defaultValues,
-    mode: "onChange",
-  });
+  const handleAddNewClick = () => {
+    setEditingGame(null);
+    form.reset(defaultValues);
+    setIsDialogOpen(true);
+  };
+
+  const handleEditClick = (gameToEdit: Game) => {
+    setEditingGame(gameToEdit);
+    const formValues = {
+      ...gameToEdit,
+      screenshots: gameToEdit.screenshots.join(', '), // Convert array to comma-separated string
+    };
+    form.reset(formValues);
+    setIsDialogOpen(true);
+  };
 
   function onSubmit(data: GameFormValues) {
-    console.log("New game data:", {
+    const gameDataToSave = {
       ...data,
-      screenshots: data.screenshots.split(',').map(s => s.trim()).filter(s => s), // Convert comma-separated string to array
-    });
-    // Here you would typically call an API to save the game
-    // For now, we just log it and close the dialog
-    setIsDialogOpen(false);
-    form.reset(); // Reset form to default values
-    // Optionally, re-fetch games to update the list if you were actually saving
-    // fetchGames(); 
-  }
+      // Convert comma-separated string to array, ensuring empty strings are filtered out
+      screenshots: data.screenshots.split(',').map(s => s.trim()).filter(s => s),
+    };
 
+    if (editingGame) {
+      console.log("Updating game data for ID:", editingGame.id, gameDataToSave);
+      // Future: Call API to update game. Then re-fetch games.
+      // e.g., await updateGame(editingGame.id, gameDataToSave);
+      // fetchGames();
+    } else {
+      console.log("New game data:", gameDataToSave);
+      // Future: Call API to add new game. Then re-fetch games.
+      // e.g., await addGame(gameDataToSave);
+      // fetchGames();
+    }
+    setIsDialogOpen(false); // This will trigger onOpenChange which handles reset
+  }
+  
   if (isLoading && games.length === 0) { // Show loader only if no games are loaded yet
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -144,217 +170,224 @@ export default function AdminPage() {
           Game Management
         </h2>
         <div className="mb-6 text-right">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="lg" className="text-xl py-3 px-6">
-                <PlusCircle className="mr-2 h-7 w-7" />
-                Add New Game
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Add New Game</DialogTitle>
-                <DialogDescription>
-                  Fill in the details for the new game. Click save when you&apos;re done.
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
-                  <FormField
-                    control={form.control}
-                    name="id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Game ID (Unique Slug)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., new-awesome-game" {...field} />
-                        </FormControl>
-                        <FormDescription>A unique identifier for the game URL.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Game Title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="A brief description of the game." className="min-h-[100px]" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="coverImage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Cover Image URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com/cover.png" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="screenshots"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Screenshot URLs (comma-separated)</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="https://url1.png, https://url2.png" className="min-h-[80px]" {...field} />
-                        </FormControl>
-                        <FormDescription>Provide URLs for game screenshots, separated by commas.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                   <FormField
-                    control={form.control}
-                    name="diskUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Disk File URL (e.g., /gamez/name.dsk)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="/gamez/your-game.dsk" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="emulatorCommand"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Emulator Command</FormLabel>
-                        <FormControl>
-                          <Input placeholder='run"disc\\n' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="rvmGameId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>RVM Game ID (Legacy)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="00000 (if applicable)" {...field} />
-                        </FormControl>
-                        <FormDescription>Legacy ID, can be a placeholder if not used.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="genre"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Genre</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Puzzle, Action" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="year"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Year</FormLabel>
-                          <FormControl>
-                            <Input type="number" placeholder="e.g., 1987" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="developer"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Developer</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Developer Name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="publisher"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Publisher</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Publisher Name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select game status" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="finished">Finished</SelectItem>
-                            <SelectItem value="wip">Work in Progress (WIP)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <DialogFooter className="pt-4">
-                    <DialogClose asChild>
-                      <Button type="button" variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button type="submit">Save Game</Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+          <Button size="lg" className="text-xl py-3 px-6" onClick={handleAddNewClick}>
+            <PlusCircle className="mr-2 h-7 w-7" />
+            Add New Game
+          </Button>
         </div>
+        
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+          setIsDialogOpen(isOpen);
+          if (!isOpen) {
+            setEditingGame(null); // Clear editing state
+            form.reset(defaultValues); // Reset form to defaults
+          }
+        }}>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">
+                {editingGame ? `Edit Game: ${editingGame.title}` : "Add New Game"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingGame ? "Update the details for this game." : "Fill in the details for the new game."} Click save when you&apos;re done.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+                <FormField
+                  control={form.control}
+                  name="id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Game ID (Unique Slug)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., new-awesome-game" {...field} disabled={!!editingGame} />
+                      </FormControl>
+                      <FormDescription>A unique identifier for the game URL. Cannot be changed after creation.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Game Title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="A brief description of the game." className="min-h-[100px]" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="coverImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cover Image URL</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://example.com/cover.png" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="screenshots"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Screenshot URLs (comma-separated)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="https://url1.png, https://url2.png" className="min-h-[80px]" {...field} />
+                      </FormControl>
+                      <FormDescription>Provide URLs for game screenshots, separated by commas.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="diskUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Disk File URL (e.g., /gamez/name.dsk)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="/gamez/your-game.dsk" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="emulatorCommand"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Emulator Command</FormLabel>
+                      <FormControl>
+                        <Input placeholder='run"disc\\n' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="rvmGameId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>RVM Game ID (Legacy)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="00000 (if applicable)" {...field} />
+                      </FormControl>
+                      <FormDescription>Legacy ID, can be a placeholder if not used.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="genre"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Genre</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Puzzle, Action" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="year"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Year</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="e.g., 1987" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="developer"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Developer</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Developer Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="publisher"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Publisher</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Publisher Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select game status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="finished">Finished</SelectItem>
+                          <SelectItem value="wip">Work in Progress (WIP)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter className="pt-4">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Save Game</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
         
         {games.length > 0 ? (
           <div className="overflow-x-auto rounded-md border">
@@ -383,7 +416,7 @@ export default function AdminPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm" className="text-lg" disabled>
+                      <Button variant="outline" size="sm" className="text-lg" onClick={() => handleEditClick(game)}>
                         <Edit className="mr-1.5 h-5 w-5" /> Edit
                       </Button>
                       <Button variant="destructive" size="sm" className="text-lg" disabled>
@@ -402,12 +435,12 @@ export default function AdminPage() {
         )}
         
         <p className="mt-6 text-lg sm:text-xl text-muted-foreground">
-          Future: Edit and Delete functionality will be enabled here.
+          Future: Edit and Delete functionality will be enabled here. Persisting changes requires backend/API integration.
         </p>
       </div>
     </div>
   );
 }
-
-
     
+
+      
