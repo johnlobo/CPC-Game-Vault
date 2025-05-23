@@ -14,7 +14,7 @@ export function GameCard({ game }: GameCardProps) {
     <Link href={`/games/${game.id}`} className="group block h-full">
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-2xl group-hover:border-primary/50 hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg">
         <CardHeader className="p-0">
-          <div className="aspect-[3/4] relative w-full overflow-hidden">
+          <div className="aspect-[4/3] relative w-full overflow-hidden"> {/* Changed from aspect-[3/4] */}
             <Image
               src={game.coverImage}
               alt={`${game.title} cover art`}
@@ -27,22 +27,22 @@ export function GameCard({ game }: GameCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-2 space-y-1">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle> {/* Adjusted text size */}
-          <div className="flex items-center text-base text-muted-foreground space-x-1.5"> {/* Details text-base */}
+          <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors">{game.title}</CardTitle>
+          <div className="flex items-center text-lg text-muted-foreground space-x-1.5">
             <div className="flex items-center">
-              <CalendarDays size={16} className="mr-0.5" /> {/* Adjusted icon size */}
+              <CalendarDays size={20} className="mr-0.5" />
               <span>{game.year}</span>
             </div>
             <div className="flex items-center">
-              <Tag size={16} className="mr-0.5" /> {/* Adjusted icon size */}
+              <Tag size={20} className="mr-0.5" />
               <span className="line-clamp-1">{game.genre}</span>
             </div>
           </div>
-          <p className="text-base text-muted-foreground line-clamp-2">{game.publisher}</p> {/* Publisher text-base */}
+          <p className="text-lg text-muted-foreground line-clamp-2">{game.publisher}</p>
         </CardContent>
         <CardFooter className="p-2 pt-0.5">
-          <div className="text-lg text-accent flex items-center font-medium"> {/* Footer text-lg */}
-            Play <ArrowRight size={16} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" /> {/* Adjusted icon size */}
+          <div className="text-xl text-accent flex items-center font-medium">
+            Play <ArrowRight size={20} className="ml-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </div>
         </CardFooter>
       </Card>

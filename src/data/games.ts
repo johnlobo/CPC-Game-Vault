@@ -21,9 +21,9 @@ export const games: Game[] = [
     id: "Ams3s",
     title: "Ams 3s",
     description: "Amsthrees is the free adaptation of the mobile platforms game Threes.The main goal of the game is to slide cards in a grid to combine them to create the highest multiple of three possible.",
-    coverImage: "https://placehold.co/300x400.png",
+    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
     screenshots: [
-      "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png", // This is a real image URL, aspect ratio will be handled by object-cover
+      "https://img.itch.zone/aW1hZ2UvODIxMTUyLzQ2MDI5NzcucG5n/original/FhAERi.png", 
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
     ],
@@ -39,7 +39,7 @@ export const games: Game[] = [
     id: "batman-the-movie",
     title: "Batman: The Movie",
     description: "Based on the 1989 film, Batman: The Movie features several levels mirroring scenes from the film, including platforming, driving, and puzzle-solving elements. The CPC version was highly acclaimed.",
-    coverImage: "https://placehold.co/300x400.png",
+    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
     screenshots: [
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
@@ -56,7 +56,7 @@ export const games: Game[] = [
     id: "arkanoid",
     title: "Arkanoid",
     description: "Arkanoid is an arcade game developed by Taito in 1986. It is a block breaker game where the player controls a paddle-like craft known as the Vaus at the bottom of the screen, and must deflect a ball towards a number of bricks at the top of the screen to destroy them.",
-    coverImage: "https://placehold.co/300x400.png",
+    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
     screenshots: [
         "https://placehold.co/400x300.png",
         "https://placehold.co/400x300.png",
@@ -73,7 +73,7 @@ export const games: Game[] = [
     id: "gryzor",
     title: "Gryzor (Contra)",
     description: "Gryzor, known as Contra in some regions, is a run-and-gun action game. Players battle aliens and enemy soldiers through various levels, collecting power-ups to upgrade their weaponry.",
-    coverImage: "https://placehold.co/300x400.png",
+    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
     screenshots: [
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
@@ -90,7 +90,7 @@ export const games: Game[] = [
     id: "sorcery",
     title: "Sorcery+",
     description: "Sorcery+ is an action-adventure game where the player controls a sorcerer on a quest to rescue fellow sorcerers. It features exploration, puzzle-solving, and combat with magical spells.",
-    coverImage: "https://placehold.co/300x400.png",
+    coverImage: "https://placehold.co/400x300.png", // Updated from 300x400
     screenshots: [
       "https://placehold.co/400x300.png",
       "https://placehold.co/400x300.png",
