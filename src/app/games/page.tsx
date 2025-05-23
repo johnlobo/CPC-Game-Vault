@@ -2,9 +2,10 @@
 import { getGames } from '@/data/games';
 import { GameCard } from '@/app/components/GameCard';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+// Removed Link and Button imports as they are no longer used for the back button
+// import Link from 'next/link';
+// import { Button } from '@/components/ui/button';
+// import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Full Game Library',
@@ -20,14 +21,7 @@ export default async function AllGamesPage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter text-center sm:text-left">
           Full Game Library
         </h1>
-        <Button variant="outline" asChild size="lg" className="w-full sm:w-auto text-xl sm:text-2xl py-3 px-5">
-          <Link href="/">
-            <span className="inline-flex items-center justify-center">
-              <ArrowLeft className="mr-1.5 h-8 w-8" />
-              <span>Back to Home</span>
-            </span>
-          </Link>
-        </Button>
+        {/* Removed Back to Home button from here */}
       </div>
        <p className="text-2xl sm:text-3xl text-muted-foreground max-w-3xl mx-auto px-4 text-center pt-2.5">
           Explore the complete collection of classic Amstrad CPC games available in the vault. Click on any game to learn more and play!
