@@ -61,14 +61,14 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       <header className="text-center space-y-1 pt-1 sm:pt-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tighter">{game.title}</h1>
         <div className="flex flex-wrap justify-center items-center gap-1.5 text-xl">
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={26} className="mr-1" /> {game.year}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={26} className="mr-1" /> {game.genre}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={26} className="mr-1" /> {game.developer}</Badge>
-          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={26} className="mr-1" /> {game.publisher}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><CalendarDays size={28} className="mr-1" /> {game.year}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Tag size={28} className="mr-1" /> {game.genre}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Code2 size={28} className="mr-1" /> {game.developer}</Badge>
+          <Badge variant="secondary" className="px-1.5 py-0.5 text-lg"><Users size={28} className="mr-1" /> {game.publisher}</Badge>
         </div>
       </header>
 
-      <div className="mt-3 sm:mt-4">
+      <div className="mt-3 sm:mt-4 flex justify-end">
         <Button variant="default" asChild size="lg" className="text-xl py-3 px-6">
           <Link href="/">
             <span className="inline-flex items-center">
@@ -81,7 +81,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
       
       <section id="play-game" className="scroll-mt-10 sm:scroll-mt-12 pt-3 sm:pt-4">
         <h2 className="text-3xl sm:text-4xl font-bold mb-2.5 sm:mb-3 text-center text-primary tracking-tight">
-          <Eye size={38} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
+          <Eye size={42} className="inline-block mr-1.5 mb-0.5 text-accent" /> Play Now!
         </h2>
         <Emulator 
           key={`${game.diskUrl}-${game.emulatorCommand}`} 
@@ -120,7 +120,7 @@ export default function GamePage({ params: paramsFromProps }: GamePageProps) {
                         loading="lazy"
                       />
                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <Eye size={42} className="text-white/80" />
+                        <Eye size={48} className="text-white/80" />
                       </div>
                     </button>
                   </DialogTrigger>
