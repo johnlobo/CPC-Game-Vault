@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 // Configure Roboto font
 const roboto = Roboto({
-  weight: ['400', '500', '700'], // Specify desired weights
+  weight: ['400', '700'], // Specify desired weights, removed '500'
   subsets: ['latin'],
   display: 'swap', // Improve font loading behavior
 });
