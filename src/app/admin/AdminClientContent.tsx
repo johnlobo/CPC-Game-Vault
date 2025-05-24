@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Edit, Trash2, LogOut } from 'lucide-react';
-import { getGames, type Game } from '@/data/games'; 
+import { PlusCircle, Edit, Trash2, LogOut, Loader2 } from 'lucide-react';
+import { getGames, type Game } from '@/data/games';
 import {
   Table,
   TableBody,
@@ -61,7 +61,7 @@ const gameFormSchema = z.object({
   diskUrl: z.string().min(1, "Disk URL is required (e.g., /gamez/yourgame.dsk)."),
   emulatorCommand: z.string().min(1, "Emulator command is required."),
   genre: z.string().min(1, "Genre is required."),
-  year: z.coerce.number().int().positive("Year must be a positive number.").min(1900, "Year seems too old").max(new Date().getFullYear() + 5, "Year seems too far in future"),
+  year: z.coerce.number().int().positive("Year must be a positive number.").min(1900, "Year seems too old").max(new Date().getFullYear() + 10, "Year seems too far in future"), // Increased max year slightly
   developer: z.string().min(1, "Developer is required."),
   publisher: z.string().min(1, "Publisher is required."),
   status: z.enum(['finished', 'wip'], { required_error: "Status is required." }),
@@ -92,9 +92,10 @@ interface AdminClientContentProps {
 export default function AdminClientContent({ userEmail }: AdminClientContentProps) {
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
-  
+
   const supabase = createClient();
   const router = useRouter();
   const { toast } = useToast();
@@ -105,14 +106,21 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     mode: "onChange",
   });
 
-  useEffect(() => {
-    async function fetchGames() {
-      setIsLoading(true);
-      const gamesData = await getGames(); 
+  async function fetchGamesData() {
+    setIsLoading(true);
+    try {
+      const gamesData = await getGames();
       setGames(gamesData);
+    } catch (error) {
+      console.error("Failed to fetch games for admin:", error);
+      toast({ title: "Error", description: "Could not load games data.", variant: "destructive" });
+    } finally {
       setIsLoading(false);
     }
-    fetchGames();
+  }
+
+  useEffect(() => {
+    fetchGamesData();
   }, []);
 
   const handleAddNewClick = () => {
@@ -125,38 +133,66 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     setEditingGame(gameToEdit);
     const formValues = {
       ...gameToEdit,
-      screenshots: gameToEdit.screenshots.join(', '), 
+      screenshots: gameToEdit.screenshots.join(', '),
     };
     form.reset(formValues);
     setIsDialogOpen(true);
   };
 
   async function onSubmit(data: GameFormValues) {
+    setIsSubmitting(true);
     const gameDataToSave: Game = {
       ...data,
       screenshots: data.screenshots.split(',').map(s => s.trim()).filter(s => s),
+      // created_at can be omitted if Supabase handles it
     };
 
-    // TODO: Replace with Supabase save logic in a future step
     if (editingGame) {
-      setGames(prevGames => 
-        prevGames.map(game => 
-          game.id === editingGame.id ? { ...game, ...gameDataToSave, id: editingGame.id } : game
-        )
-      );
-      toast({ title: "Game Updated (Session)", description: `"${gameDataToSave.title}" details updated for this session.` });
-      console.log("Updated game data (client-side):", editingGame.id, gameDataToSave);
-    } else {
-      const existingGame = games.find(g => g.id === gameDataToSave.id);
-      if (existingGame) {
-        form.setError("id", { type: "manual", message: "This ID is already in use. Please choose a unique ID." });
-        return; 
+      // Update existing game in Supabase
+      const { error } = await supabase
+        .from('games')
+        .update(gameDataToSave)
+        .eq('id', editingGame.id);
+
+      if (error) {
+        toast({ title: "Update Failed", description: error.message, variant: "destructive" });
+        console.error("Error updating game in Supabase:", error);
+      } else {
+        toast({ title: "Game Updated", description: `"${gameDataToSave.title}" details saved to database.` });
+        await fetchGamesData(); // Re-fetch to update the table
+        setIsDialogOpen(false);
       }
-      setGames(prevGames => [...prevGames, gameDataToSave]);
-      toast({ title: "Game Added (Session)", description: `"${gameDataToSave.title}" added for this session.` });
-      console.log("New game data added (client-side):", gameDataToSave);
+    } else {
+      // Add new game to Supabase
+      // Optional: Server-side check for ID uniqueness if your DB doesn't enforce it,
+      // but for now, we rely on user input and potential DB constraint.
+      const { data: existing, error: fetchError } = await supabase.from('games').select('id').eq('id', gameDataToSave.id).maybeSingle();
+
+      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = 0 rows, which is fine for new
+         toast({ title: "Error Checking ID", description: fetchError.message, variant: "destructive" });
+         setIsSubmitting(false);
+         return;
+      }
+      if (existing) {
+        form.setError("id", { type: "manual", message: "This ID is already in use. Please choose a unique ID." });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { error: insertError } = await supabase
+        .from('games')
+        .insert([gameDataToSave]);
+
+      if (insertError) {
+        toast({ title: "Save Failed", description: insertError.message, variant: "destructive" });
+        console.error("Error inserting game into Supabase:", insertError);
+      } else {
+        toast({ title: "Game Added", description: `"${gameDataToSave.title}" saved to database.` });
+        await fetchGamesData(); // Re-fetch to update the table
+        setIsDialogOpen(false);
+      }
     }
-    setIsDialogOpen(false); 
+    setIsSubmitting(false);
   }
 
   const handleLogout = async () => {
@@ -166,13 +202,14 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
       toast({ title: "Logout Failed", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
-      router.push('/login'); // Or router.refresh() if middleware handles redirect
+      router.push('/login');
     }
   };
-  
-  if (isLoading && games.length === 0) { 
+
+  if (isLoading && games.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center min-h-[60vh] gap-2">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-xl text-muted-foreground">Loading admin area...</p>
       </div>
     );
@@ -187,29 +224,30 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
         {userEmail && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground hidden sm:inline">Logged in as: {userEmail}</span>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
+            <Button variant="outline" size="sm" onClick={handleLogout} disabled={isSubmitting}>
               <LogOut className="mr-1.5 h-4 w-4" /> Logout
             </Button>
           </div>
         )}
       </div>
-      
+
       <div className="bg-card p-3 sm:p-4 rounded-lg shadow-xl">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-2xl sm:text-3xl font-bold text-accent tracking-tight">
             Game Management
           </h2>
-          <Button size="lg" className="text-lg py-2 px-4" onClick={handleAddNewClick}>
+          <Button size="lg" className="text-lg py-2 px-4" onClick={handleAddNewClick} disabled={isSubmitting}>
             <PlusCircle className="mr-1.5 h-6 w-6" />
             Add New Game
           </Button>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+          if (isSubmitting) return; // Prevent closing while submitting
           setIsDialogOpen(isOpen);
           if (!isOpen) {
-            setEditingGame(null); 
-            form.reset(defaultValues); 
+            setEditingGame(null);
+            form.reset(defaultValues);
           }
         }}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4">
@@ -230,11 +268,11 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Game ID (Unique Slug)</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="e.g., new-awesome-game (auto-formats to slug)" 
-                          {...field} 
-                          disabled={!!editingGame} 
-                          className="bg-input text-base" 
+                        <Input
+                          placeholder="e.g., new-awesome-game (auto-formats to slug)"
+                          {...field}
+                          disabled={!!editingGame || isSubmitting}
+                          className="bg-input text-base"
                           onChange={(e) => {
                             const value = e.target.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
                             field.onChange(value);
@@ -253,7 +291,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Game Title" {...field} className="bg-input text-base" />
+                        <Input placeholder="Game Title" {...field} disabled={isSubmitting} className="bg-input text-base" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -266,7 +304,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Description</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="A brief description of the game." className="min-h-[80px] bg-input text-base" {...field} />
+                        <Textarea placeholder="A brief description of the game." disabled={isSubmitting} className="min-h-[80px] bg-input text-base" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -279,7 +317,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Cover Image URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/cover.png" {...field} className="bg-input text-base" />
+                        <Input placeholder="https://example.com/cover.png" {...field} disabled={isSubmitting} className="bg-input text-base" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -292,7 +330,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Screenshot URLs (comma-separated)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="https://url1.png, https://url2.png" className="min-h-[70px] bg-input text-base" {...field} />
+                        <Textarea placeholder="https://url1.png, https://url2.png" disabled={isSubmitting} className="min-h-[70px] bg-input text-base" {...field} />
                       </FormControl>
                       <FormDescription className="text-sm">Provide URLs for game screenshots, separated by commas.</FormDescription>
                       <FormMessage />
@@ -306,7 +344,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Disk File URL (e.g., /gamez/name.dsk)</FormLabel>
                       <FormControl>
-                        <Input placeholder="/gamez/your-game.dsk" {...field} className="bg-input text-base" />
+                        <Input placeholder="/gamez/your-game.dsk" {...field} disabled={isSubmitting} className="bg-input text-base" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -319,7 +357,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Emulator Command</FormLabel>
                       <FormControl>
-                        <Input placeholder='run"disc\\n' {...field} className="bg-input text-base" />
+                        <Input placeholder='run"disc\\n' {...field} disabled={isSubmitting} className="bg-input text-base" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -332,7 +370,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <FormItem>
                       <FormLabel className="font-semibold text-base">RVM Game ID (Legacy)</FormLabel>
                       <FormControl>
-                        <Input placeholder="00000 (if applicable)" {...field} className="bg-input text-base" />
+                        <Input placeholder="00000 (if applicable)" {...field} disabled={isSubmitting} className="bg-input text-base" />
                       </FormControl>
                       <FormDescription className="text-sm">Legacy ID, can be a placeholder if not used.</FormDescription>
                       <FormMessage />
@@ -347,7 +385,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       <FormItem>
                         <FormLabel className="font-semibold text-base">Genre</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Puzzle, Action" {...field} className="bg-input text-base" />
+                          <Input placeholder="e.g., Puzzle, Action" {...field} disabled={isSubmitting} className="bg-input text-base" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -360,7 +398,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       <FormItem>
                         <FormLabel className="font-semibold text-base">Year</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="e.g., 1987" {...field} className="bg-input text-base" />
+                          <Input type="number" placeholder="e.g., 1987" {...field} disabled={isSubmitting} className="bg-input text-base" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -375,7 +413,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       <FormItem>
                         <FormLabel className="font-semibold text-base">Developer</FormLabel>
                         <FormControl>
-                          <Input placeholder="Developer Name" {...field} className="bg-input text-base" />
+                          <Input placeholder="Developer Name" {...field} disabled={isSubmitting} className="bg-input text-base" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -388,7 +426,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       <FormItem>
                         <FormLabel className="font-semibold text-base">Publisher</FormLabel>
                         <FormControl>
-                          <Input placeholder="Publisher Name" {...field} className="bg-input text-base" />
+                          <Input placeholder="Publisher Name" {...field} disabled={isSubmitting} className="bg-input text-base" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -401,7 +439,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="font-semibold text-base">Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value} disabled={isSubmitting}>
                         <FormControl>
                           <SelectTrigger className="bg-input text-base">
                             <SelectValue placeholder="Select game status" />
@@ -418,15 +456,19 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                 />
                 <DialogFooter className="pt-3">
                   <DialogClose asChild>
-                    <Button type="button" variant="outline" className="text-base">Cancel</Button>
+                    <Button type="button" variant="outline" className="text-base" disabled={isSubmitting}>Cancel</Button>
                   </DialogClose>
-                  <Button type="submit" className="text-base">Save Game</Button>
+                  <Button type="submit" className="text-base" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
+                    ) : "Save Game"}
+                  </Button>
                 </DialogFooter>
               </form>
             </Form>
           </DialogContent>
         </Dialog>
-        
+
         {games.length > 0 ? (
           <div className="overflow-x-auto rounded-md border">
             <Table>
@@ -446,7 +488,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <TableCell className="text-base text-center">{game.year}</TableCell>
                     <TableCell className="text-base">{game.publisher}</TableCell>
                     <TableCell className="text-base text-center">
-                      <Badge 
+                      <Badge
                         variant={game.status === 'wip' ? 'secondary' : 'default'}
                         className={game.status === 'wip' ? 'bg-wip text-wip-foreground border-wip text-xs' : 'bg-primary/20 text-primary border-primary/30 text-xs'}
                       >
@@ -454,10 +496,10 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-1">
-                      <Button variant="outline" size="sm" className="text-sm" onClick={() => handleEditClick(game)}>
+                      <Button variant="outline" size="sm" className="text-sm" onClick={() => handleEditClick(game)} disabled={isSubmitting}>
                         <Edit className="mr-1 h-4 w-4" /> Edit
                       </Button>
-                      <Button variant="destructive" size="sm" className="text-sm" disabled> 
+                      <Button variant="destructive" size="sm" className="text-sm" disabled>
                         <Trash2 className="mr-1 h-4 w-4" /> Delete
                       </Button>
                     </TableCell>
@@ -468,12 +510,12 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
           </div>
         ) : (
            <p className="text-lg sm:text-xl text-muted-foreground text-center py-6">
-            No games found in the library. Add one to get started!
+            No games found in the database. Add one to get started!
           </p>
         )}
-        
+
         <p className="mt-4 text-sm text-muted-foreground">
-          Note: Game data changes made here are for the current session only and will not persist after a page refresh until database integration.
+          Game data is now being managed via Supabase. Changes made here will persist.
         </p>
       </div>
     </div>
