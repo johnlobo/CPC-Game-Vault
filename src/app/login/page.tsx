@@ -10,14 +10,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 
 export default function LoginPage() {
   const supabase = createClient()
-  const router = useRouter()
+  const router = useRouter() // Keep useRouter for other potential uses, though not for this specific redirect
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/admin'
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        router.push(redirectTo)
+        // Use window.location.href for a full page navigation
+        // This can sometimes be more robust in environments with tricky cookie/session propagation
+        window.location.href = redirectTo;
       }
     })
 
@@ -25,7 +27,8 @@ export default function LoginPage() {
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        router.push(redirectTo)
+        // Use window.location.href here as well for consistency
+        window.location.href = redirectTo;
       }
     }
     checkSession()
@@ -33,7 +36,7 @@ export default function LoginPage() {
     return () => {
       subscription?.unsubscribe()
     }
-  }, [supabase, router, redirectTo])
+  }, [supabase, redirectTo]) // Removed router from dependency array as it's not directly used for the redirect anymore
 
   return (
     <div className="flex justify-center items-center min-h-[70vh]">
