@@ -184,11 +184,11 @@ export default function AdminPage() {
           }
         }}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-2xl font-bold">
                 {editingGame ? `Edit Game: ${editingGame.title}` : "Add New Game"}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-base text-muted-foreground pt-1">
                 {editingGame ? "Update the details for this game." : "Fill in the details for the new game."} Click save when you&apos;re done.
               </DialogDescription>
             </DialogHeader>
@@ -199,9 +199,9 @@ export default function AdminPage() {
                   name="id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Game ID (Unique Slug)</FormLabel>
+                      <FormLabel className="font-semibold">Game ID (Unique Slug)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., new-awesome-game" {...field} disabled={!!editingGame} />
+                        <Input placeholder="e.g., new-awesome-game" {...field} disabled={!!editingGame} className="bg-input" />
                       </FormControl>
                       <FormDescription>A unique identifier for the game URL. Cannot be changed after creation.</FormDescription>
                       <FormMessage />
@@ -213,9 +213,9 @@ export default function AdminPage() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabel className="font-semibold">Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Game Title" {...field} />
+                        <Input placeholder="Game Title" {...field} className="bg-input" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -226,9 +226,9 @@ export default function AdminPage() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel className="font-semibold">Description</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="A brief description of the game." className="min-h-[100px]" {...field} />
+                        <Textarea placeholder="A brief description of the game." className="min-h-[100px] bg-input" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -239,9 +239,9 @@ export default function AdminPage() {
                   name="coverImage"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cover Image URL</FormLabel>
+                      <FormLabel className="font-semibold">Cover Image URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/cover.png" {...field} />
+                        <Input placeholder="https://example.com/cover.png" {...field} className="bg-input" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -252,9 +252,9 @@ export default function AdminPage() {
                   name="screenshots"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Screenshot URLs (comma-separated)</FormLabel>
+                      <FormLabel className="font-semibold">Screenshot URLs (comma-separated)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="https://url1.png, https://url2.png" className="min-h-[80px]" {...field} />
+                        <Textarea placeholder="https://url1.png, https://url2.png" className="min-h-[80px] bg-input" {...field} />
                       </FormControl>
                       <FormDescription>Provide URLs for game screenshots, separated by commas.</FormDescription>
                       <FormMessage />
@@ -266,9 +266,9 @@ export default function AdminPage() {
                   name="diskUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Disk File URL (e.g., /gamez/name.dsk)</FormLabel>
+                      <FormLabel className="font-semibold">Disk File URL (e.g., /gamez/name.dsk)</FormLabel>
                       <FormControl>
-                        <Input placeholder="/gamez/your-game.dsk" {...field} />
+                        <Input placeholder="/gamez/your-game.dsk" {...field} className="bg-input" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -279,9 +279,9 @@ export default function AdminPage() {
                   name="emulatorCommand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Emulator Command</FormLabel>
+                      <FormLabel className="font-semibold">Emulator Command</FormLabel>
                       <FormControl>
-                        <Input placeholder='run"disc\\n' {...field} />
+                        <Input placeholder='run"disc\\n' {...field} className="bg-input" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -292,9 +292,9 @@ export default function AdminPage() {
                   name="rvmGameId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>RVM Game ID (Legacy)</FormLabel>
+                      <FormLabel className="font-semibold">RVM Game ID (Legacy)</FormLabel>
                       <FormControl>
-                        <Input placeholder="00000 (if applicable)" {...field} />
+                        <Input placeholder="00000 (if applicable)" {...field} className="bg-input" />
                       </FormControl>
                       <FormDescription>Legacy ID, can be a placeholder if not used.</FormDescription>
                       <FormMessage />
@@ -307,9 +307,9 @@ export default function AdminPage() {
                     name="genre"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Genre</FormLabel>
+                        <FormLabel className="font-semibold">Genre</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Puzzle, Action" {...field} />
+                          <Input placeholder="e.g., Puzzle, Action" {...field} className="bg-input" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -320,9 +320,9 @@ export default function AdminPage() {
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year</FormLabel>
+                        <FormLabel className="font-semibold">Year</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="e.g., 1987" {...field} />
+                          <Input type="number" placeholder="e.g., 1987" {...field} className="bg-input" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -335,9 +335,9 @@ export default function AdminPage() {
                     name="developer"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Developer</FormLabel>
+                        <FormLabel className="font-semibold">Developer</FormLabel>
                         <FormControl>
-                          <Input placeholder="Developer Name" {...field} />
+                          <Input placeholder="Developer Name" {...field} className="bg-input" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -348,9 +348,9 @@ export default function AdminPage() {
                     name="publisher"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Publisher</FormLabel>
+                        <FormLabel className="font-semibold">Publisher</FormLabel>
                         <FormControl>
-                          <Input placeholder="Publisher Name" {...field} />
+                          <Input placeholder="Publisher Name" {...field} className="bg-input" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -362,10 +362,10 @@ export default function AdminPage() {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel className="font-semibold">Status</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="bg-input">
                             <SelectValue placeholder="Select game status" />
                           </SelectTrigger>
                         </FormControl>
@@ -444,3 +444,5 @@ export default function AdminPage() {
     
 
       
+
+    
