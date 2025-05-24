@@ -15,17 +15,19 @@ export default async function AdminPage() {
   const supabase = createClient(cookieStore);
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error, // It's good practice to check for an error from getUser as well
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (error || !user) {
     // Construct the redirectTo URL; ensure it's an absolute URL for Supabase redirects if needed,
     // or a path for client-side router. For redirect() from Next.js server component, path is fine.
-    const currentPath = '/admin'; // Or dynamically get current path if this page could be elsewhere
+    const currentPath = '/admin'; 
     redirect(`/login?redirectTo=${encodeURIComponent(currentPath)}`);
   }
 
-  // If session exists, render the client-side admin content
+  // If user exists, render the client-side admin content
   // Pass user email for display, or the whole user object if more details are needed.
-  return <AdminClientContent userEmail={session.user.email} />;
+  return <AdminClientContent userEmail={user.email} />;
 }
+
