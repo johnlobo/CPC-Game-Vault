@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Edit, Trash2, Settings, ArrowLeft } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Settings } from 'lucide-react';
 // No server-side metadata for client components
 // import type { Metadata } from 'next';
 import { getGames, type Game } from '@/data/games'; 
@@ -56,7 +56,7 @@ import { z } from "zod";
 // };
 
 const gameFormSchema = z.object({
-  id: z.string().min(1, "ID is required."),
+  id: z.string().min(1, "ID is required.").trim().toLowerCase().replace(/\s+/g, '-'), // auto-slugify
   title: z.string().min(1, "Title is required."),
   description: z.string().min(1, "Description is required."),
   coverImage: z.string().url("Must be a valid URL for cover image."),
@@ -105,7 +105,7 @@ export default function AdminPage() {
   useEffect(() => {
     async function fetchGames() {
       setIsLoading(true);
-      const gamesData = await getGames();
+      const gamesData = await getGames(); // Fetch initial games
       setGames(gamesData);
       setIsLoading(false);
     }
@@ -129,27 +129,36 @@ export default function AdminPage() {
   };
 
   function onSubmit(data: GameFormValues) {
-    const gameDataToSave = {
+    const gameDataToSave: Game = {
       ...data,
       // Convert comma-separated string to array, ensuring empty strings are filtered out
       screenshots: data.screenshots.split(',').map(s => s.trim()).filter(s => s),
     };
 
     if (editingGame) {
-      console.log("Updating game data for ID:", editingGame.id, gameDataToSave);
-      // Future: Call API to update game. Then re-fetch games.
-      // e.g., await updateGame(editingGame.id, gameDataToSave);
-      // fetchGames();
+      // Update existing game in the local state
+      setGames(prevGames => 
+        prevGames.map(game => 
+          game.id === editingGame.id ? { ...game, ...gameDataToSave, id: editingGame.id } : game
+        )
+      );
+      console.log("Updated game data for ID:", editingGame.id, gameDataToSave);
     } else {
-      console.log("New game data:", gameDataToSave);
-      // Future: Call API to add new game. Then re-fetch games.
-      // e.g., await addGame(gameDataToSave);
-      // fetchGames();
+      // Add new game to the local state
+      // Ensure ID is unique (for client-side, basic check)
+      const existingGame = games.find(g => g.id === gameDataToSave.id);
+      if (existingGame) {
+        form.setError("id", { type: "manual", message: "This ID is already in use. Please choose a unique ID." });
+        return; 
+      }
+      setGames(prevGames => [...prevGames, gameDataToSave]);
+      console.log("New game data added:", gameDataToSave);
     }
-    setIsDialogOpen(false); // This will trigger onOpenChange which handles reset
+    setIsDialogOpen(false); 
+    // Dialog onOpenChange will handle form reset if setEditingGame(null) is called there
   }
   
-  if (isLoading && games.length === 0) { // Show loader only if no games are loaded yet
+  if (isLoading && games.length === 0) { 
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <p className="text-2xl text-muted-foreground">Loading admin area...</p>
@@ -179,8 +188,8 @@ export default function AdminPage() {
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
           setIsDialogOpen(isOpen);
           if (!isOpen) {
-            setEditingGame(null); // Clear editing state
-            form.reset(defaultValues); // Reset form to defaults
+            setEditingGame(null); 
+            form.reset(defaultValues); 
           }
         }}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -201,9 +210,18 @@ export default function AdminPage() {
                     <FormItem>
                       <FormLabel className="font-semibold">Game ID (Unique Slug)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., new-awesome-game" {...field} disabled={!!editingGame} className="bg-input" />
+                        <Input 
+                          placeholder="e.g., new-awesome-game (auto-formats to slug)" 
+                          {...field} 
+                          disabled={!!editingGame} 
+                          className="bg-input" 
+                          onChange={(e) => {
+                            const value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
-                      <FormDescription>A unique identifier for the game URL. Cannot be changed after creation.</FormDescription>
+                      <FormDescription>A unique identifier for the game URL. Cannot be changed after creation. Will be auto-formatted.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -419,7 +437,7 @@ export default function AdminPage() {
                       <Button variant="outline" size="sm" className="text-lg" onClick={() => handleEditClick(game)}>
                         <Edit className="mr-1.5 h-5 w-5" /> Edit
                       </Button>
-                      <Button variant="destructive" size="sm" className="text-lg" disabled>
+                      <Button variant="destructive" size="sm" className="text-lg" disabled> {/* Delete is still disabled */}
                         <Trash2 className="mr-1.5 h-5 w-5" /> Delete
                       </Button>
                     </TableCell>
@@ -435,7 +453,7 @@ export default function AdminPage() {
         )}
         
         <p className="mt-6 text-lg sm:text-xl text-muted-foreground">
-          Future: Edit and Delete functionality will be enabled here. Persisting changes requires backend/API integration.
+          Note: Changes made here are for the current session only and will not persist after a page refresh unless integrated with a backend.
         </p>
       </div>
     </div>
