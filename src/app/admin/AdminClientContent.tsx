@@ -26,6 +26,17 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -93,7 +104,9 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
 
   const supabase = createClient();
@@ -126,7 +139,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
   const handleAddNewClick = () => {
     setEditingGame(null);
     form.reset(defaultValues);
-    setIsDialogOpen(true);
+    setIsFormDialogOpen(true);
   };
 
   const handleEditClick = (gameToEdit: Game) => {
@@ -136,7 +149,12 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
       screenshots: gameToEdit.screenshots.join(', '),
     };
     form.reset(formValues);
-    setIsDialogOpen(true);
+    setIsFormDialogOpen(true);
+  };
+
+  const handleDeleteClick = (game: Game) => {
+    setGameToDelete(game);
+    setIsDeleteDialogOpen(true);
   };
 
   async function onSubmit(data: GameFormValues) {
@@ -160,12 +178,10 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
       } else {
         toast({ title: "Game Updated", description: `"${gameDataToSave.title}" details saved to database.` });
         await fetchGamesData(); // Re-fetch to update the table
-        setIsDialogOpen(false);
+        setIsFormDialogOpen(false);
       }
     } else {
       // Add new game to Supabase
-      // Optional: Server-side check for ID uniqueness if your DB doesn't enforce it,
-      // but for now, we rely on user input and potential DB constraint.
       const { data: existing, error: fetchError } = await supabase.from('games').select('id').eq('id', gameDataToSave.id).maybeSingle();
 
       if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = 0 rows, which is fine for new
@@ -189,13 +205,35 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
       } else {
         toast({ title: "Game Added", description: `"${gameDataToSave.title}" saved to database.` });
         await fetchGamesData(); // Re-fetch to update the table
-        setIsDialogOpen(false);
+        setIsFormDialogOpen(false);
       }
     }
     setIsSubmitting(false);
   }
 
+  const confirmDeleteGame = async () => {
+    if (!gameToDelete) return;
+    setIsSubmitting(true);
+
+    const { error } = await supabase
+      .from('games')
+      .delete()
+      .eq('id', gameToDelete.id);
+
+    if (error) {
+      toast({ title: "Delete Failed", description: error.message, variant: "destructive" });
+      console.error("Error deleting game from Supabase:", error);
+    } else {
+      toast({ title: "Game Deleted", description: `"${gameToDelete.title}" has been removed from the database.` });
+      await fetchGamesData(); // Re-fetch to update the table
+    }
+    setIsSubmitting(false);
+    setIsDeleteDialogOpen(false);
+    setGameToDelete(null);
+  };
+
   const handleLogout = async () => {
+    setIsSubmitting(true);
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error logging out:', error);
@@ -204,6 +242,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
       router.push('/login');
     }
+    setIsSubmitting(false);
   };
 
   if (isLoading && games.length === 0) {
@@ -242,9 +281,9 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
           </Button>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-          if (isSubmitting) return; // Prevent closing while submitting
-          setIsDialogOpen(isOpen);
+        <Dialog open={isFormDialogOpen} onOpenChange={(isOpen) => {
+          if (isSubmitting) return; 
+          setIsFormDialogOpen(isOpen);
           if (!isOpen) {
             setEditingGame(null);
             form.reset(defaultValues);
@@ -459,7 +498,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <Button type="button" variant="outline" className="text-base" disabled={isSubmitting}>Cancel</Button>
                   </DialogClose>
                   <Button type="submit" className="text-base" disabled={isSubmitting}>
-                    {isSubmitting ? (
+                    {isSubmitting && !gameToDelete ? ( // Only show saving spinner for add/edit
                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
                     ) : "Save Game"}
                   </Button>
@@ -468,6 +507,31 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
             </Form>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={(isOpen) => {
+            if (isSubmitting) return;
+            setIsDeleteDialogOpen(isOpen);
+            if (!isOpen) setGameToDelete(null);
+        }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the game
+                "{gameToDelete?.title}" from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setGameToDelete(null)} disabled={isSubmitting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDeleteGame} disabled={isSubmitting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                 {isSubmitting && gameToDelete ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</>
+                  ) : "Yes, delete game"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
 
         {games.length > 0 ? (
           <div className="overflow-x-auto rounded-md border">
@@ -499,7 +563,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                       <Button variant="outline" size="sm" className="text-sm" onClick={() => handleEditClick(game)} disabled={isSubmitting}>
                         <Edit className="mr-1 h-4 w-4" /> Edit
                       </Button>
-                      <Button variant="destructive" size="sm" className="text-sm" disabled>
+                      <Button variant="destructive" size="sm" className="text-sm" onClick={() => handleDeleteClick(game)} disabled={isSubmitting}>
                         <Trash2 className="mr-1 h-4 w-4" /> Delete
                       </Button>
                     </TableCell>
@@ -521,3 +585,5 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     </div>
   );
 }
+
+    
