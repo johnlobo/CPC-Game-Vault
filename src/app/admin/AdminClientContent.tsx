@@ -213,23 +213,41 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
 
   const confirmDeleteGame = async () => {
     if (!gameToDelete) return;
-    setIsSubmitting(true);
+    setIsSubmitting(true); // Use isSubmitting for the spinner in AlertDialogAction
+
+    const gameIdToDelete = gameToDelete.id; // Store id before gameToDelete might be nulled
+    const gameTitleToDelete = gameToDelete.title; // Store title for toast message
 
     const { error } = await supabase
       .from('games')
       .delete()
-      .eq('id', gameToDelete.id);
+      .eq('id', gameIdToDelete);
 
     if (error) {
       toast({ title: "Delete Failed", description: error.message, variant: "destructive" });
       console.error("Error deleting game from Supabase:", error);
+      // Don't close dialog or nullify gameToDelete on error, so user can see what failed or retry/cancel
     } else {
-      toast({ title: "Game Deleted", description: `"${gameToDelete.title}" has been removed from the database.` });
-      await fetchGamesData(); // Re-fetch to update the table
+      toast({ title: "Game Deleted", description: `"${gameTitleToDelete}" has been removed from the database.` });
+      
+      // Optimistic update: Remove the game from the local state immediately
+      setGames(prevGames => prevGames.filter(g => g.id !== gameIdToDelete));
+      
+      // Re-fetch from Supabase to ensure consistency.
+      // If the item reappears after this, it means the DB delete didn't actually happen
+      // (e.g., RLS silently blocked it but the client call didn't error appropriately).
+      try {
+        await fetchGamesData(); 
+      } catch (fetchError) {
+        console.error("Error re-fetching games after delete:", fetchError);
+        // The fetchGamesData itself has a toast for its errors.
+        // If fetch fails, the optimistic update might be temporarily misleading until next successful fetch.
+      }
+      // Close dialog and reset gameToDelete only on successful path completion
+      setIsDeleteDialogOpen(false);
+      setGameToDelete(null);
     }
-    setIsSubmitting(false);
-    setIsDeleteDialogOpen(false);
-    setGameToDelete(null);
+    setIsSubmitting(false); // Reset submitting state regardless of outcome
   };
 
   const handleLogout = async () => {
@@ -498,7 +516,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     <Button type="button" variant="outline" className="text-base" disabled={isSubmitting}>Cancel</Button>
                   </DialogClose>
                   <Button type="submit" className="text-base" disabled={isSubmitting}>
-                    {isSubmitting && !gameToDelete ? ( // Only show saving spinner for add/edit
+                    {isSubmitting ? ( 
                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
                     ) : "Save Game"}
                   </Button>
@@ -509,7 +527,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
         </Dialog>
 
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={(isOpen) => {
-            if (isSubmitting) return;
+            if (isSubmitting) return; // Prevent closing dialog if an operation is in progress
             setIsDeleteDialogOpen(isOpen);
             if (!isOpen) setGameToDelete(null);
         }}>
@@ -522,9 +540,9 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setGameToDelete(null)} disabled={isSubmitting}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => {setIsDeleteDialogOpen(false); setGameToDelete(null);}} disabled={isSubmitting}>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={confirmDeleteGame} disabled={isSubmitting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                 {isSubmitting && gameToDelete ? (
+                 {isSubmitting && gameToDelete ? ( // Check if isSubmitting AND gameToDelete is set (implies delete op)
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</>
                   ) : "Yes, delete game"}
               </AlertDialogAction>
@@ -585,5 +603,3 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     </div>
   );
 }
-
-    
