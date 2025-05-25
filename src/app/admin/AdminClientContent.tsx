@@ -72,10 +72,11 @@ const gameFormSchema = z.object({
   diskUrl: z.string().min(1, "Disk URL is required (e.g., /gamez/yourgame.dsk)."),
   emulatorCommand: z.string().min(1, "Emulator command is required."),
   genre: z.string().min(1, "Genre is required."),
-  year: z.coerce.number().int().positive("Year must be a positive number.").min(1900, "Year seems too old").max(new Date().getFullYear() + 10, "Year seems too far in future"), // Increased max year slightly
+  year: z.coerce.number().int().positive("Year must be a positive number.").min(1900, "Year seems too old").max(new Date().getFullYear() + 10, "Year seems too far in future"),
   developer: z.string().min(1, "Developer is required."),
   publisher: z.string().min(1, "Publisher is required."),
   status: z.enum(['finished', 'wip'], { required_error: "Status is required." }),
+  display_order: z.coerce.number().int().min(0, "Order must be a non-negative number."),
 });
 
 type GameFormValues = z.infer<typeof gameFormSchema>;
@@ -94,6 +95,7 @@ const defaultValues: Partial<GameFormValues> = {
   developer: "",
   publisher: "",
   status: "finished",
+  display_order: 0,
 };
 
 interface AdminClientContentProps {
@@ -122,7 +124,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
   async function fetchGamesData() {
     setIsLoading(true);
     try {
-      const gamesData = await getGames();
+      const gamesData = await getGames(); // getGames now sorts by display_order
       setGames(gamesData);
     } catch (error) {
       console.error("Failed to fetch games for admin:", error);
@@ -138,7 +140,9 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
 
   const handleAddNewClick = () => {
     setEditingGame(null);
-    form.reset(defaultValues);
+    // Determine next display_order
+    const nextOrder = games.length > 0 ? Math.max(...games.map(g => g.display_order ?? 0)) + 1 : 0;
+    form.reset({...defaultValues, display_order: nextOrder });
     setIsFormDialogOpen(true);
   };
 
@@ -147,6 +151,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     const formValues = {
       ...gameToEdit,
       screenshots: gameToEdit.screenshots.join(', '),
+      display_order: gameToEdit.display_order ?? 0, // Ensure display_order is a number
     };
     form.reset(formValues);
     setIsFormDialogOpen(true);
@@ -159,14 +164,13 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
 
   async function onSubmit(data: GameFormValues) {
     setIsSubmitting(true);
-    const gameDataToSave: Game = {
+    const gameDataToSave: Omit<Game, 'created_at'> & { display_order: number } = {
       ...data,
       screenshots: data.screenshots.split(',').map(s => s.trim()).filter(s => s),
-      // created_at can be omitted if Supabase handles it
+      display_order: Number(data.display_order), // Ensure it's a number
     };
 
     if (editingGame) {
-      // Update existing game in Supabase
       const { error } = await supabase
         .from('games')
         .update(gameDataToSave)
@@ -177,14 +181,13 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
         console.error("Error updating game in Supabase:", error);
       } else {
         toast({ title: "Game Updated", description: `"${gameDataToSave.title}" details saved to database.` });
-        await fetchGamesData(); // Re-fetch to update the table
+        await fetchGamesData();
         setIsFormDialogOpen(false);
       }
     } else {
-      // Add new game to Supabase
       const { data: existing, error: fetchError } = await supabase.from('games').select('id').eq('id', gameDataToSave.id).maybeSingle();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = 0 rows, which is fine for new
+      if (fetchError && fetchError.code !== 'PGRST116') {
          toast({ title: "Error Checking ID", description: fetchError.message, variant: "destructive" });
          setIsSubmitting(false);
          return;
@@ -204,7 +207,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
         console.error("Error inserting game into Supabase:", insertError);
       } else {
         toast({ title: "Game Added", description: `"${gameDataToSave.title}" saved to database.` });
-        await fetchGamesData(); // Re-fetch to update the table
+        await fetchGamesData();
         setIsFormDialogOpen(false);
       }
     }
@@ -213,10 +216,10 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
 
   const confirmDeleteGame = async () => {
     if (!gameToDelete) return;
-    setIsSubmitting(true); // Use isSubmitting for the spinner in AlertDialogAction
+    setIsSubmitting(true);
 
-    const gameIdToDelete = gameToDelete.id; // Store id before gameToDelete might be nulled
-    const gameTitleToDelete = gameToDelete.title; // Store title for toast message
+    const gameIdToDelete = gameToDelete.id;
+    const gameTitleToDelete = gameToDelete.title;
 
     const { error } = await supabase
       .from('games')
@@ -226,28 +229,18 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     if (error) {
       toast({ title: "Delete Failed", description: error.message, variant: "destructive" });
       console.error("Error deleting game from Supabase:", error);
-      // Don't close dialog or nullify gameToDelete on error, so user can see what failed or retry/cancel
     } else {
       toast({ title: "Game Deleted", description: `"${gameTitleToDelete}" has been removed from the database.` });
-      
-      // Optimistic update: Remove the game from the local state immediately
       setGames(prevGames => prevGames.filter(g => g.id !== gameIdToDelete));
-      
-      // Re-fetch from Supabase to ensure consistency.
-      // If the item reappears after this, it means the DB delete didn't actually happen
-      // (e.g., RLS silently blocked it but the client call didn't error appropriately).
       try {
         await fetchGamesData(); 
       } catch (fetchError) {
         console.error("Error re-fetching games after delete:", fetchError);
-        // The fetchGamesData itself has a toast for its errors.
-        // If fetch fails, the optimistic update might be temporarily misleading until next successful fetch.
       }
-      // Close dialog and reset gameToDelete only on successful path completion
       setIsDeleteDialogOpen(false);
       setGameToDelete(null);
     }
-    setIsSubmitting(false); // Reset submitting state regardless of outcome
+    setIsSubmitting(false);
   };
 
   const handleLogout = async () => {
@@ -490,27 +483,43 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                     )}
                   />
                 </div>
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-semibold text-base">Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value} disabled={isSubmitting}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-base">Status</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value} disabled={isSubmitting}>
+                          <FormControl>
+                            <SelectTrigger className="bg-input text-base">
+                              <SelectValue placeholder="Select game status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="finished" className="text-base">Finished</SelectItem>
+                            <SelectItem value="wip" className="text-base">Work in Progress (WIP)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="display_order"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-base">Display Order</FormLabel>
                         <FormControl>
-                          <SelectTrigger className="bg-input text-base">
-                            <SelectValue placeholder="Select game status" />
-                          </SelectTrigger>
+                          <Input type="number" placeholder="e.g., 0, 1, 10" {...field} disabled={isSubmitting} className="bg-input text-base" />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="finished" className="text-base">Finished</SelectItem>
-                          <SelectItem value="wip" className="text-base">Work in Progress (WIP)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                         <FormDescription className="text-sm">Determines order in lists. Lower numbers appear first.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <DialogFooter className="pt-3">
                   <DialogClose asChild>
                     <Button type="button" variant="outline" className="text-base" disabled={isSubmitting}>Cancel</Button>
@@ -527,7 +536,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
         </Dialog>
 
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={(isOpen) => {
-            if (isSubmitting) return; // Prevent closing dialog if an operation is in progress
+            if (isSubmitting) return;
             setIsDeleteDialogOpen(isOpen);
             if (!isOpen) setGameToDelete(null);
         }}>
@@ -542,7 +551,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => {setIsDeleteDialogOpen(false); setGameToDelete(null);}} disabled={isSubmitting}>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={confirmDeleteGame} disabled={isSubmitting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                 {isSubmitting && gameToDelete ? ( // Check if isSubmitting AND gameToDelete is set (implies delete op)
+                 {isSubmitting && gameToDelete ? ( 
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</>
                   ) : "Yes, delete game"}
               </AlertDialogAction>
@@ -560,6 +569,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                   <TableHead className="text-base text-center">Year</TableHead>
                   <TableHead className="text-base">Publisher</TableHead>
                   <TableHead className="text-base text-center">Status</TableHead>
+                  <TableHead className="text-base text-center">Order</TableHead>
                   <TableHead className="text-base text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -577,6 +587,7 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
                         {game.status === 'wip' ? 'WIP' : 'Finished'}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-base text-center">{game.display_order}</TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button variant="outline" size="sm" className="text-sm" onClick={() => handleEditClick(game)} disabled={isSubmitting}>
                         <Edit className="mr-1 h-4 w-4" /> Edit
@@ -603,3 +614,4 @@ export default function AdminClientContent({ userEmail }: AdminClientContentProp
     </div>
   );
 }
+

@@ -27,6 +27,7 @@ export type Database = {
           developer: string
           publisher: string
           status: "finished" | "wip"
+          display_order?: number // New field for ordering
           created_at?: string // Handled by Supabase (e.g., default now())
         }
         Insert: {
@@ -43,6 +44,7 @@ export type Database = {
           developer: string
           publisher: string
           status: "finished" | "wip"
+          display_order?: number // New field
           created_at?: string // Optional, Supabase can handle
         }
         Update: {
@@ -59,6 +61,7 @@ export type Database = {
           developer?: string
           publisher?: string
           status?: "finished" | "wip"
+          display_order?: number // New field
           created_at?: string
         }
         Relationships: []

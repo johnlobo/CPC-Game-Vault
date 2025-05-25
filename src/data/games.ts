@@ -17,6 +17,7 @@ export interface Game {
   developer: string;
   publisher: string;
   status: 'finished' | 'wip';
+  display_order?: number; // Added display_order
   created_at?: string; // Optional, matching Supabase schema
 }
 
@@ -29,13 +30,18 @@ export const getGames = async (): Promise<Game[]> => {
   const { data, error } = await supabase
     .from('games')
     .select('*')
-    .order('title', { ascending: true });
+    .order('display_order', { ascending: true, nullsFirst: false }) // Order by display_order
+    .order('title', { ascending: true }); // Secondary sort by title
 
   if (error) {
     console.error('Error fetching games from Supabase:', error);
     return []; // Return empty array on error or throw
   }
-  return data as Game[] || [];
+  // Ensure display_order is a number, default to 0 if null/undefined from DB
+  return (data as Game[] || []).map(game => ({
+    ...game,
+    display_order: game.display_order ?? 0,
+  }));
 };
 
 export const getGameById = async (id: string): Promise<Game | undefined> => {
@@ -53,5 +59,13 @@ export const getGameById = async (id: string): Promise<Game | undefined> => {
     }
     return undefined;
   }
-  return data as Game || undefined;
+  const gameData = data as Game || undefined;
+  if (gameData) {
+    return {
+      ...gameData,
+      display_order: gameData.display_order ?? 0,
+    };
+  }
+  return undefined;
 };
+
