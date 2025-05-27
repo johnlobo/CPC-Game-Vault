@@ -54,6 +54,11 @@ export function Emulator({ diskUrl, command, title, status }: EmulatorProps) {
     setErrorMessage(null);
     console.log(`[EMULATOR INIT] Loading emulator for ${title} with command: ${command}`);
 
+    // Process the command to ensure \n is a real newline
+    const processedCommand = command.replace(/\\n/g, '\n');
+    console.log(`[EMULATOR INIT] Processed command for ${title}: ${JSON.stringify(processedCommand)}`);
+
+
     if (typeof window.rvmPlayer_cpc6128 === 'function') {
       try {
         window.rvmPlayer_cpc6128(activeContainerElement, {
@@ -61,7 +66,7 @@ export function Emulator({ diskUrl, command, title, status }: EmulatorProps) {
             type: 'dsk',
             url: diskUrl,
           },
-          command: command,
+          command: processedCommand, // Use the processed command
           warpFrames: 20 * 50,
           waitAudio: true,
         });
